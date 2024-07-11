@@ -1,0 +1,11 @@
+{
+    "$schema": "https://json.schemastore.org/package.json",
+    "name": "herobrian",
+    "private": true,
+    "version": "1.0.0",
+    "author": "Brian Reece <me@bdreece.dev>",
+    "license": "MIT",
+    "workspaces": [
+        "web/app"
+    ]
+}
