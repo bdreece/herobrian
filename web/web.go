@@ -2,9 +2,11 @@ package web
 
 import (
 	"embed"
+	"io/fs"
 )
 
 var (
 	//go:embed templates/*
-	Templates embed.FS
+    fsys embed.FS
+	Templates, _ = fs.Sub(fsys, "templates")
 )

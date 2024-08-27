@@ -5,18 +5,18 @@ tmp_dir = "tmp"
 [build]
   args_bin = []
   bin = "./bin/herobrian"
-  cmd = "npm run -ws build && mkdir -p bin && go build -v -o ./bin ./cmd/herobrian"
+  cmd = "make build"
   delay = 1000
-  exclude_dir = ["assets", "tmp", "vendor", "testdata", "bin", "web/app/dist"]
+  exclude_dir = ["bin", "tmp", "web/app/dist"]
   exclude_file = []
-  exclude_regex = ["_test.go"]
+  exclude_regex = ["_test.go", "_string.go"]
   exclude_unchanged = false
   follow_symlink = false
   full_bin = ""
   include_dir = []
-  include_ext = ["css", "ts", "gotmpl", "go"]
+  include_ext = ["go", "gotmpl", "js", "css", "yml"]
   include_file = []
-  kill_delay = "500ms"
+  kill_delay = "250ms"
   log = "build-errors.log"
   poll = false
   poll_interval = 0
@@ -25,7 +25,7 @@ tmp_dir = "tmp"
   rerun = false
   rerun_delay = 500
   send_interrupt = true
-  stop_on_error = false
+  stop_on_error = true
 
 [color]
   app = ""

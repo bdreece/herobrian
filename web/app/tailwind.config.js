@@ -2,7 +2,7 @@ import { addIconSelectors } from '@iconify/tailwind';
 
 /** @type {import('tailwindcss').Config} */
 export default {
-    content: ["../templates/**/*.gotmpl", "./src/**/*.ts"],
+    content: ["../templates/*.gotmpl", "./src/**/*.ts"],
     theme: {
         extend: {
             colors: {

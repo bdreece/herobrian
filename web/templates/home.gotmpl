@@ -2,44 +2,107 @@
 
 {{ define "content" }}
 
-<article
-    hx-ext="sse"
-    sse-connect="/sse"
->
-    <section class="w-fit my-6 mx-auto p-4 rounded shadow-lg bg-background">
-        <h3 class="text-lg font-bold mb-4">Server Details:</h3>
+<div hx-ext="sse">
+    <article sse-connect="/linode/sse">
+        <section class="w-fit my-6 mx-auto p-4 rounded shadow-lg bg-background">
+            <h3 class="text-lg font-bold mb-4">Server Details:</h3>
 
-        <dl class="grid grid-cols-2 gap-2 items-center">
-            <dt>Server URL:</dt>
-            <dd class="italic rounded bg-accent p-2 justify-self-center">
-                {{ .URL }}
-            </dd>
+            <dl class="grid grid-cols-2 gap-2 items-center">
+                <dt>Server URL:</dt>
+                <dd class="italic rounded bg-accent p-2 justify-self-center">
+                    {{ .URL }}
+                </dd>
 
-            <dt>Server Status</dt>
-            <dd class="italic rounded bg-accent p-2 justify-self-center">
+                <dt>Server Status</dt>
+                <dd class="italic rounded bg-accent p-2 justify-self-center">
+                    <span
+                        sse-swap="status"
+                        hx-swap="innerHTML"
+                    >
+                        Loading...
+                    </span>
+                </dd>
+            </dl>
+        </section>
+
+        <section class="w-fit my-6 mx-auto p-4 rounded shadow-lg bg-background">
+            <h3 class="text-lg font-bold mb-4">System Controls:</h3>
+
+            <div class="grid gap-2 content-center">
                 <span
-                    sse-swap="status"
-                    hx-swap="innerHTML"
+                    class="rounded-full bg-slate-200 text-center"
+                    sse-swap="running,offline"
+                    hx-swap="outerHTML"
                 >
                     Loading...
                 </span>
-            </dd>
-        </dl>
-    </section>
+            </div>
+        </section>
+    </article>
 
-    <section class="w-fit my-6 mx-auto p-4 rounded shadow-lg bg-background">
-        <h3 class="text-lg font-bold mb-4">System Controls:</h3>
+    <article
+        class="grid grid-cols-8 gap-4 w-fit my-6 mx-auto p-4 rounded shadow-lg bg-background"
+    >
+        {{range .Units}}
+        <h3 class="col-span-2">{{.Description}}</h3>
 
-        <div class="grid gap-2 content-center">
+        <div sse-connect="/systemd/{{.Instance}}/sse">
             <span
-                class="rounded-full bg-slate-200 text-center"
-                sse-swap="running,offline"
+                id="{{.Instance}}-status"
+                sse-swap="status"
                 hx-swap="outerHTML"
             >
                 Loading...
             </span>
         </div>
-    </section>
-</article>
+
+        <button
+            class="rounded-full bg-accent"
+            hx-post="/systemd/{{.Instance}}/enable"
+            hx-target="{{.Instance}}-status"
+            hx-swap="outerHTML"
+        >
+            Enable
+        </button>
+
+        <button
+            class="rounded-full bg-accent"
+            hx-post="/systemd/{{.Instance}}/disable"
+            hx-target="{{.Instance}}-status"
+            hx-swap="outerHTML"
+        >
+            Disable
+        </button>
+
+        <button
+            class="rounded-full bg-accent"
+            hx-post="/systemd/{{.Instance}}/start"
+            hx-target="{{.Instance}}-status"
+            hx-swap="outerHTML"
+        >
+            Start
+        </button>
+
+        <button
+            class="rounded-full bg-accent"
+            hx-post="/systemd/{{.Instance}}/stop"
+            hx-target="{{.Instance}}-status"
+            hx-swap="outerHTML"
+        >
+            Stop
+        </button>
+
+        <button
+            class="rounded-full bg-accent"
+            hx-post="/systemd/{{.Instance}}/restart"
+            hx-target="{{.Instance}}-status"
+            hx-swap="outerHTML"
+        >
+            Restart
+        </button>
+        {{end}}
+
+    </article>
+</div>
 
 {{ end }}
