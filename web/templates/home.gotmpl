@@ -40,13 +40,19 @@
         </section>
     </article>
 
+    <!--
     <article
         class="grid grid-cols-8 gap-4 w-fit my-6 mx-auto p-4 rounded shadow-lg bg-background"
     >
+        <h2 class="font-bold col-span-8">Minecraft Instances:</h2>
+
         {{range .Units}}
         <h3 class="col-span-2">{{.Description}}</h3>
 
-        <div sse-connect="/systemd/{{.Instance}}/sse">
+        <div
+            class="grid grid-cols-subgrid gap-4 col-span-6"
+            sse-connect="/systemd/{{.Instance}}/sse"
+        >
             <span
                 id="{{.Instance}}-status"
                 sse-swap="status"
@@ -54,55 +60,56 @@
             >
                 Loading...
             </span>
+
+            <button
+                class="rounded-full bg-accent"
+                hx-post="/systemd/{{.Instance}}/enable"
+                hx-target="#{{.Instance}}-status"
+                hx-swap="outerHTML"
+            >
+                Enable
+            </button>
+
+            <button
+                class="rounded-full bg-accent"
+                hx-post="/systemd/{{.Instance}}/disable"
+                hx-target="#{{.Instance}}-status"
+                hx-swap="outerHTML"
+            >
+                Disable
+            </button>
+
+            <button
+                class="rounded-full bg-accent"
+                hx-post="/systemd/{{.Instance}}/start"
+                hx-target="#{{.Instance}}-status"
+                hx-swap="outerHTML"
+            >
+                Start
+            </button>
+
+            <button
+                class="rounded-full bg-accent"
+                hx-post="/systemd/{{.Instance}}/stop"
+                hx-target="#{{.Instance}}-status"
+                hx-swap="outerHTML"
+            >
+                Stop
+            </button>
+
+            <button
+                class="rounded-full bg-accent"
+                hx-post="/systemd/{{.Instance}}/restart"
+                hx-target="#{{.Instance}}-status"
+                hx-swap="outerHTML"
+            >
+                Restart
+            </button>
         </div>
-
-        <button
-            class="rounded-full bg-accent"
-            hx-post="/systemd/{{.Instance}}/enable"
-            hx-target="{{.Instance}}-status"
-            hx-swap="outerHTML"
-        >
-            Enable
-        </button>
-
-        <button
-            class="rounded-full bg-accent"
-            hx-post="/systemd/{{.Instance}}/disable"
-            hx-target="{{.Instance}}-status"
-            hx-swap="outerHTML"
-        >
-            Disable
-        </button>
-
-        <button
-            class="rounded-full bg-accent"
-            hx-post="/systemd/{{.Instance}}/start"
-            hx-target="{{.Instance}}-status"
-            hx-swap="outerHTML"
-        >
-            Start
-        </button>
-
-        <button
-            class="rounded-full bg-accent"
-            hx-post="/systemd/{{.Instance}}/stop"
-            hx-target="{{.Instance}}-status"
-            hx-swap="outerHTML"
-        >
-            Stop
-        </button>
-
-        <button
-            class="rounded-full bg-accent"
-            hx-post="/systemd/{{.Instance}}/restart"
-            hx-target="{{.Instance}}-status"
-            hx-swap="outerHTML"
-        >
-            Restart
-        </button>
         {{end}}
 
     </article>
+    -->
 </div>
 
 {{ end }}
