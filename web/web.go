@@ -7,6 +7,6 @@ import (
 
 var (
 	//go:embed templates/*
-    fsys embed.FS
+	fsys         embed.FS
 	Templates, _ = fs.Sub(fsys, "templates")
 )

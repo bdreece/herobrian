@@ -20,16 +20,16 @@ type SSH struct {
 
 // Key loads the SSH key for the configured remote user.
 func (transport SSH) Key() (goph.Auth, error) {
-    return goph.Key(transport.KeyPath, "")
+	return goph.Key(transport.KeyPath, "")
 }
 
 func ConfigureSSH(provider config.Provider) (*ClientOptions[SSH], error) {
-    opts := new(ClientOptions[SSH])
-    if err := provider.Get("systemd").Populate(opts); err != nil {
-        return nil, fmt.Errorf("failed to configure SSH systemd client options: %w", err)
-    }
+	opts := new(ClientOptions[SSH])
+	if err := provider.Get("systemd").Populate(opts); err != nil {
+		return nil, fmt.Errorf("failed to configure SSH systemd client options: %w", err)
+	}
 
-    return opts, nil
+	return opts, nil
 }
 
 func (c *sshClient) Status(ctx context.Context, unit Unit) (*Status, error) {
@@ -39,7 +39,7 @@ func (c *sshClient) Status(ctx context.Context, unit Unit) (*Status, error) {
 	// }
 
 	var status Status
-    if err := status.UnmarshalText(out); err != nil {
+	if err := status.UnmarshalText(out); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal status text %q: %w", string(out), err)
 	}
 

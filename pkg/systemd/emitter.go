@@ -33,17 +33,17 @@ func (se *emitter) Close() error {
 }
 
 func NewEmitter(services *ServiceFactory, logger *slog.Logger) (Emitter, error) {
-    e := event.NewEmitter[string, Status]()
+	e := event.NewEmitter[string, Status]()
 
 	errs := make([]error, 0)
-    wrks := make([]worker.Service, 0, len(services.Units()))
+	wrks := make([]worker.Service, 0, len(services.Units()))
 	for _, unit := range services.Units() {
 		wrk, err := newWorkerService(workerParams{
 			Emitter:  e,
-            Factory: services,
-            Instance: unit.Instance,
+			Factory:  services,
+			Instance: unit.Instance,
 			Interval: time.Second,
-            Logger: logger,
+			Logger:   logger,
 		})
 
 		if err != nil {
@@ -63,7 +63,7 @@ func NewEmitter(services *ServiceFactory, logger *slog.Logger) (Emitter, error) 
 	}
 
 	return &emitter{
-        Emitter: e,
-        workers: wrks,
-    }, nil
+		Emitter: e,
+		workers: wrks,
+	}, nil
 }

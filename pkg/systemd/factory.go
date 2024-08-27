@@ -23,9 +23,9 @@ func (f *ServiceFactory) Create(instance string) (*Service, error) {
 		}
 	}
 
-    return nil, fmt.Errorf("systemd instance not found")
+	return nil, fmt.Errorf("systemd instance not found")
 }
 
 func NewServiceFactory(opts *ClientOptions[SSH]) *ServiceFactory {
-    return &ServiceFactory{opts}
+	return &ServiceFactory{opts}
 }

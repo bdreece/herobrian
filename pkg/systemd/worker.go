@@ -30,13 +30,13 @@ func newWorkerService(p workerParams) (worker.Service, error) {
 			case <-ticker.C:
 				service, err := p.Factory.Create(p.Instance)
 				if err != nil {
-                    p.Logger.Error("something bad happened", slog.String("error", err.Error()))
+					p.Logger.Error("something bad happened", slog.String("error", err.Error()))
 					continue
 				}
 
 				status, err := service.Status(ctx)
 				if err != nil {
-                    p.Logger.Error("something bad happened", slog.String("error", err.Error()))
+					p.Logger.Error("something bad happened", slog.String("error", err.Error()))
 					return fmt.Errorf("failed to refresh service status: %w", err)
 				}
 

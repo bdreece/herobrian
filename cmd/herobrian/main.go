@@ -9,14 +9,14 @@ import (
 )
 
 func main() {
-    var args herobrian.Args
+	var args herobrian.Args
 	defer quit()
 
-    flag.IntVar(&args.Port, "p", 3000, "port")
+	flag.IntVar(&args.Port, "p", 3000, "port")
 	flag.StringVar(&args.ConfigPath, "c", "configs/settings.yml", "config path")
 	flag.Parse()
 
-    herobrian.New(args).Run()
+	herobrian.New(args).Run()
 }
 
 func quit() {

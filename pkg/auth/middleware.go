@@ -6,7 +6,7 @@ import (
 )
 
 func NewMiddleware(opts *Options) echo.MiddlewareFunc {
-    return middleware.BasicAuth(func(user, pass string, ctx echo.Context) (bool, error) {
-        return user == opts.Username && pass == opts.Password, nil
-    })
+	return middleware.BasicAuth(func(user, pass string, ctx echo.Context) (bool, error) {
+		return user == opts.Username && pass == opts.Password, nil
+	})
 }

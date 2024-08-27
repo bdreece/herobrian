@@ -7,5 +7,45 @@
     "license": "MIT",
     "workspaces": [
         "web/app"
-    ]
+    ],
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^8.3.0",
+        "eslint": "^9.9.1",
+        "eslint-config-prettier": "^9.1.0",
+        "husky": "^9.1.5",
+        "lint-staged": "^15.2.9",
+        "prettier": "^3.3.3",
+        "prettier-plugin-go-template": "^0.0.15",
+        "stylelint": "^16.8.2",
+        "stylelint-config-standard": "^36.0.1",
+        "typescript": "^5.5.4"
+    },
+    "lint-staged": {
+        "*.js": "eslint --cache --fix",
+        "*.css": "stylelint --fix",
+        "*.{js,css,md}": "prettier --write"
+    },
+    "scripts": {
+        "prepare": "husky install"
+    },
+    "eslintConfig": {
+        "root": true,
+        "extends": [
+            "eslint:recommended",
+            "plugin:@typescript-eslint/recommended",
+            "prettier"
+        ],
+        "plugins": [
+            "@typescript-eslint/eslint-plugin"
+        ],
+        "parser": "@typescript-eslint/parser",
+        "env": {
+            "browser": true,
+            "es6": true
+        },
+        "parserOptions": {
+            "sourceType": "module",
+            "ecmaVersion": "latest"
+        }
+    }
 }

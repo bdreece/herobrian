@@ -12,10 +12,10 @@ type Options struct {
 }
 
 func Configure(provider config.Provider) (*Options, error) {
-    opts := new(Options)
-    if err := provider.Get("router").Populate(opts); err != nil {
-        return nil, fmt.Errorf("failed to configure router options: %w", err)
-    }
+	opts := new(Options)
+	if err := provider.Get("router").Populate(opts); err != nil {
+		return nil, fmt.Errorf("failed to configure router options: %w", err)
+	}
 
-    return opts, nil
+	return opts, nil
 }

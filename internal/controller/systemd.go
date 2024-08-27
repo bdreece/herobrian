@@ -166,7 +166,7 @@ func (controller *Systemd) SSE(c echo.Context) error {
 	sub := controller.emitter.Subscribe(model.Instance, statusch)
 	defer controller.emitter.Unsubscribe(model.Instance, sub)
 
-    var buf bytes.Buffer
+	var buf bytes.Buffer
 	for {
 		select {
 		case <-c.Request().Context().Done():
@@ -177,13 +177,13 @@ func (controller *Systemd) SSE(c echo.Context) error {
 				return err
 			}
 
-            controller.logger.Info("writing event", slog.String("buffer", buf.String()))
-            if _, err = io.Copy(w, &buf); err != nil {
-                return err
-            }
+			controller.logger.Info("writing event", slog.String("buffer", buf.String()))
+			if _, err = io.Copy(w, &buf); err != nil {
+				return err
+			}
 
 			w.Flush()
-            buf.Reset()
+			buf.Reset()
 		}
 	}
 }
@@ -216,8 +216,8 @@ func NewSystemd(p SystemdParams) *Systemd {
 
 func systemdStatusEvent(instance string, status systemd.Status) event {
 	return event{
-        Event: "status",
-        Data: fmt.Sprintf(`
+		Event: "status",
+		Data: fmt.Sprintf(`
             <span
                 id="%s-status"
                 class="rounded-full bg-neutral-400 p-2"
@@ -227,5 +227,5 @@ func systemdStatusEvent(instance string, status systemd.Status) event {
                 %s
             </span>
         `, instance, status),
-    }
+	}
 }

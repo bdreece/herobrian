@@ -39,5 +39,3 @@ func (e event) WriteTo(w io.Writer) (int64, error) {
 
 	return total + int64(n), nil
 }
-
-

@@ -3,6 +3,7 @@ package controller
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 
@@ -21,15 +22,16 @@ var (
         `,
 	}
 
-    linodeOfflineEvent = event{
-        Event: "offline",
-        Data: `
+	linodeOfflineEvent = event{
+		Event: "offline",
+		Data: `
             <button class="rounded-full bg-primary" hx-post="/linode/boot" hx-swap="outerHTML">
                 Boot
             </button>
         `,
-    }
+	}
 )
+
 type LinodeParams struct {
 	fx.In
 
@@ -114,15 +116,18 @@ func (controller *Linode) SSE(c echo.Context) error {
 		case <-c.Request().Context().Done():
 			return nil
 		case status := <-ch:
-            _, _ = linodeStatusEvent(status.String()).WriteTo(&buf)
+			_, _ = linodeStatusEvent(status.String()).WriteTo(&buf)
 
 			if status == linode.StatusRunning {
-                _, _ = linodeRunningEvent.WriteTo(&buf)
+				_, _ = linodeRunningEvent.WriteTo(&buf)
 			} else if status == linode.StatusOffline {
-                _, _ = linodeOfflineEvent.WriteTo(&buf)
+				_, _ = linodeOfflineEvent.WriteTo(&buf)
 			}
 
-			w.Write(buf.Bytes())
+            if _, err := io.Copy(w, &buf); err != nil {
+                return err
+            }
+
 			w.Flush()
 			buf.Reset()
 		}
@@ -138,8 +143,8 @@ func NewLinode(p LinodeParams) *Linode {
 }
 
 func linodeStatusEvent(status string) event {
-    return event{
-        Event: "status",
-        Data: fmt.Sprintf(`<span>%s</span>`, status),
-    }
+	return event{
+		Event: "status",
+		Data:  fmt.Sprintf(`<span>%s</span>`, status),
+	}
 }

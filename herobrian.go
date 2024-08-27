@@ -82,7 +82,7 @@ func New(args Args) *fx.App {
 			systemd.ConfigureSSH,
 			systemd.NewSSH,
 			systemd.NewEmitter,
-            systemd.NewServiceFactory,
+			systemd.NewServiceFactory,
 		),
 		fx.Provide(
 			auth.Configure,

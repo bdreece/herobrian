@@ -38,31 +38,31 @@ func New(p Params) Router {
 		middleware.Static(p.Options.StaticDirectory),
 		middleware.Static(p.Options.AppDirectory),
 		slogecho.New(p.Logger),
-    )
+	)
 
 	return Router{e}
 }
 
 func (r Router) MapHome(home echo.HandlerFunc, mw ...echo.MiddlewareFunc) {
-    r.GET("/", home, mw...)
+	r.GET("/", home, mw...)
 }
 
 func (r Router) MapLinode(linode *controller.Linode, mw ...echo.MiddlewareFunc) {
-	route := r.Group("/linode")
+	route := r.Group("/linode", mw...)
 	route.GET("/sse", linode.SSE)
-	route.POST("/boot", linode.Boot, mw...)
-	route.POST("/reboot", linode.Reboot, mw...)
-	route.POST("/shutdown", linode.Shutdown, mw...)
+	route.POST("/boot", linode.Boot)
+	route.POST("/reboot", linode.Reboot)
+	route.POST("/shutdown", linode.Shutdown)
 }
 
 func (r Router) MapSystemd(systemd *controller.Systemd, mw ...echo.MiddlewareFunc) {
-	route := r.Group("/systemd/:instance")
+	route := r.Group("/systemd/:instance", mw...)
 	route.GET("/sse", systemd.SSE)
-	route.POST("/enable", systemd.Enable, mw...)
-	route.POST("/disable", systemd.Disable, mw...)
-	route.POST("/start", systemd.Start, mw...)
-	route.POST("/stop", systemd.Stop, mw...)
-	route.POST("/restart", systemd.Restart, mw...)
+	route.POST("/enable", systemd.Enable)
+	route.POST("/disable", systemd.Disable)
+	route.POST("/start", systemd.Start)
+	route.POST("/stop", systemd.Stop)
+	route.POST("/restart", systemd.Restart)
 }
 
 func (r Router) Start(addr string) error {

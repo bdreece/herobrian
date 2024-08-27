@@ -60,7 +60,7 @@ func (ws *service) Stop(ctx context.Context) error {
 }
 
 func NewService(run RunFunc) Service {
-    return &service{run: run}
+	return &service{run: run}
 }
 
 func Start(ctx context.Context, services ...Service) error {
