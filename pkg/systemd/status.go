@@ -15,6 +15,7 @@ const (
 	StatusInactive                    // inactive
 	StatusEnabled                     // enabled
 	StatusDisabled                    // disabled
+    StatusFailed                      // failed
 	StatusStatic                      // static
 	StatusMasked                      // masked
 	StatusAlias                       // alias
@@ -23,11 +24,11 @@ const (
 
 func (s *Status) UnmarshalText(data []byte) error {
     lines := strings.Split(string(data), "\n")
-    if len(lines) < 3 {
+    if len(lines) < 5 {
         return fmt.Errorf("received invalid systemd status output %q", string(data))
     }
 
-    activeLine := lines[2]
+    activeLine := lines[4]
     switch true {
     case strings.Contains(activeLine, StatusActiveRunning.String()):
         *s = StatusActiveRunning

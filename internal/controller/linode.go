@@ -122,7 +122,6 @@ func (controller *Linode) SSE(c echo.Context) error {
                 _, _ = linodeOfflineEvent.WriteTo(&buf)
 			}
 
-			controller.logger.Info("writing event", slog.String("buffer", buf.String()))
 			w.Write(buf.Bytes())
 			w.Flush()
 			buf.Reset()

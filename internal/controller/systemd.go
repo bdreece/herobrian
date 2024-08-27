@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -10,13 +11,6 @@ import (
 	"github.com/bdreece/herobrian/pkg/systemd"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/fx"
-)
-
-const (
-	systemdEnabledEvent  = "event: enabled\ndata:\n\n"
-	systemdDisabledEvent = "event: disabled\ndata:\n\n"
-	systemdStartedEvent  = "event: started\ndata:\n\n"
-	systemdStoppedEvent  = "event: stopped\ndata:\n\n"
 )
 
 var (
@@ -52,7 +46,16 @@ func (controller *Systemd) Enable(c echo.Context) error {
 	}
 
 	controller.emitter.Publish(svc.Unit().Instance, systemd.StatusEnabled)
-	return c.NoContent(http.StatusOK)
+	return c.HTML(http.StatusOK, fmt.Sprintf(`
+        <span
+            id="%s-status"
+            class="rounded-full bg-neutral-400 p-2"
+            sse-swap="status"
+            hx-swap="outerHTML"
+        >
+            enabling...
+        </span>
+    `, svc.Unit().Instance))
 }
 
 func (controller *Systemd) Disable(c echo.Context) error {
@@ -66,7 +69,16 @@ func (controller *Systemd) Disable(c echo.Context) error {
 	}
 
 	controller.emitter.Publish(svc.Unit().Instance, systemd.StatusDisabled)
-	return c.NoContent(http.StatusOK)
+	return c.HTML(http.StatusOK, fmt.Sprintf(`
+        <span
+            id="%s-status"
+            class="rounded-full bg-neutral-400 p-2"
+            sse-swap="status"
+            hx-swap="outerHTML"
+        >
+            disabling...
+        </span>
+    `, svc.Unit().Instance))
 }
 
 func (controller *Systemd) Start(c echo.Context) error {
@@ -79,7 +91,16 @@ func (controller *Systemd) Start(c echo.Context) error {
 		return err
 	}
 
-	return c.NoContent(http.StatusOK)
+	return c.HTML(http.StatusOK, fmt.Sprintf(`
+        <span
+            id="%s-status"
+            class="rounded-full bg-neutral-400 p-2"
+            sse-swap="status"
+            hx-swap="outerHTML"
+        >
+            starting...
+        </span>
+    `, svc.Unit().Instance))
 }
 
 func (controller *Systemd) Stop(c echo.Context) error {
@@ -92,7 +113,16 @@ func (controller *Systemd) Stop(c echo.Context) error {
 		return err
 	}
 
-	return c.NoContent(http.StatusOK)
+	return c.HTML(http.StatusOK, fmt.Sprintf(`
+        <span
+            id="%s-status"
+            class="rounded-full bg-neutral-400 p-2"
+            sse-swap="status"
+            hx-swap="outerHTML"
+        >
+            stopping...
+        </span>
+    `, svc.Unit().Instance))
 }
 
 func (controller *Systemd) Restart(c echo.Context) error {
@@ -105,7 +135,16 @@ func (controller *Systemd) Restart(c echo.Context) error {
 		return err
 	}
 
-	return c.NoContent(http.StatusOK)
+	return c.HTML(http.StatusOK, fmt.Sprintf(`
+        <span
+            id="%s-status"
+            class="rounded-full bg-neutral-400 p-2"
+            sse-swap="status"
+            hx-swap="outerHTML"
+        >
+            restarting...
+        </span>
+    `, svc.Unit().Instance))
 }
 
 func (controller *Systemd) SSE(c echo.Context) error {
@@ -123,21 +162,28 @@ func (controller *Systemd) SSE(c echo.Context) error {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 
-	ch := make(chan systemd.Status, 1)
-	sub := controller.emitter.Subscribe(model.Instance, ch)
+	statusch := make(chan systemd.Status, 1)
+	sub := controller.emitter.Subscribe(model.Instance, statusch)
 	defer controller.emitter.Unsubscribe(model.Instance, sub)
 
+    var buf bytes.Buffer
 	for {
 		select {
 		case <-c.Request().Context().Done():
 			return nil
-		case status := <-ch:
-			_, err := io.WriteString(w, systemdStatusEvent(status))
+		case status := <-statusch:
+			_, err := systemdStatusEvent(model.Instance, status).WriteTo(&buf)
 			if err != nil {
 				return err
 			}
 
+            controller.logger.Info("writing event", slog.String("buffer", buf.String()))
+            if _, err = io.Copy(w, &buf); err != nil {
+                return err
+            }
+
 			w.Flush()
+            buf.Reset()
 		}
 	}
 }
@@ -168,6 +214,18 @@ func NewSystemd(p SystemdParams) *Systemd {
 	}
 }
 
-func systemdStatusEvent(status systemd.Status) string {
-	return fmt.Sprintf("event: status\ndata: %s\n\n", status)
+func systemdStatusEvent(instance string, status systemd.Status) event {
+	return event{
+        Event: "status",
+        Data: fmt.Sprintf(`
+            <span
+                id="%s-status"
+                class="rounded-full bg-neutral-400 p-2"
+                sse-swap="status"
+                hx-swap="outerHTML"
+            >
+                %s
+            </span>
+        `, instance, status),
+    }
 }

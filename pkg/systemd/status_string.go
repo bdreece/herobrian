@@ -14,15 +14,16 @@ func _() {
 	_ = x[StatusInactive-3]
 	_ = x[StatusEnabled-4]
 	_ = x[StatusDisabled-5]
-	_ = x[StatusStatic-6]
-	_ = x[StatusMasked-7]
-	_ = x[StatusAlias-8]
-	_ = x[StatusLinked-9]
+	_ = x[StatusFailed-6]
+	_ = x[StatusStatic-7]
+	_ = x[StatusMasked-8]
+	_ = x[StatusAlias-9]
+	_ = x[StatusLinked-10]
 }
 
-const _Status_name = "active (running)active (exited)active (waiting)inactiveenableddisabledstaticmaskedaliaslinked"
+const _Status_name = "active (running)active (exited)active (waiting)inactiveenableddisabledfailedstaticmaskedaliaslinked"
 
-var _Status_index = [...]uint8{0, 16, 31, 47, 55, 62, 70, 76, 82, 87, 93}
+var _Status_index = [...]uint8{0, 16, 31, 47, 55, 62, 70, 76, 82, 88, 93, 99}
 
 func (i Status) String() string {
 	if i < 0 || i >= Status(len(_Status_index)-1) {
