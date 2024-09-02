@@ -1,4 +1,4 @@
-# herobrian v0.1.0
+# herobrian v1.2.0
 # Copyright (C) 2024 Brian Reece
 
 all: build

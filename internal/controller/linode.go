@@ -16,7 +16,11 @@ var (
 	linodeRunningEvent = event{
 		Event: "running",
 		Data: `
-            <button class="rounded-full bg-primary" hx-post="/linode/shutdown" hx-swap="outerHTML">
+            <button
+                class="btn btn-primary"
+                hx-post="/linode/shutdown"
+                hx-swap="outerHTML"
+            >
                 Shutdown
             </button> 
         `,
@@ -25,11 +29,33 @@ var (
 	linodeOfflineEvent = event{
 		Event: "offline",
 		Data: `
-            <button class="rounded-full bg-primary" hx-post="/linode/boot" hx-swap="outerHTML">
+            <button
+                class="btn btn-secondary"
+                hx-post="/linode/boot"
+                hx-swap="outerHTML"
+            >
                 Boot
             </button>
         `,
 	}
+
+	spinner = `
+        <div
+            class="sk-cube-grid"
+            sse-swap="running,offline"
+            hx-swap="outerHTML"
+        >
+            <div class="sk-cube sk-cube1"></div>
+            <div class="sk-cube sk-cube2"></div>
+            <div class="sk-cube sk-cube3"></div>
+            <div class="sk-cube sk-cube4"></div>
+            <div class="sk-cube sk-cube5"></div>
+            <div class="sk-cube sk-cube6"></div>
+            <div class="sk-cube sk-cube7"></div>
+            <div class="sk-cube sk-cube8"></div>
+            <div class="sk-cube sk-cube9"></div>
+        </div>
+    `
 )
 
 type LinodeParams struct {
@@ -52,15 +78,7 @@ func (controller *Linode) Boot(c echo.Context) error {
 		return err
 	}
 
-	return c.HTML(http.StatusOK, `
-        <span
-            class="rounded-full bg-neutral-400 text-center"
-            sse-swap="running,offline"
-            hx-swap="outerHTML"
-        >
-            Booting...
-        </span>
-    `)
+	return c.HTML(http.StatusOK, spinner)
 }
 
 func (controller *Linode) Reboot(c echo.Context) error {
@@ -69,15 +87,7 @@ func (controller *Linode) Reboot(c echo.Context) error {
 		return err
 	}
 
-	return c.HTML(http.StatusOK, `
-        <span
-            class="rounded-full bg-neutral-400 text-center"
-            sse-swap="running,offline"
-            hx-swap="outerHTML"
-        >
-            Rebooting...
-        </span>
-    `)
+	return c.HTML(http.StatusOK, spinner)
 }
 
 func (controller *Linode) Shutdown(c echo.Context) error {
@@ -86,15 +96,7 @@ func (controller *Linode) Shutdown(c echo.Context) error {
 		return err
 	}
 
-	return c.HTML(http.StatusOK, `
-        <span
-            class="rounded-full bg-neutral-400 text-center"
-            sse-swap="running,offline"
-            hx-swap="outerHTML"
-        >
-            Shutting down...
-        </span>
-    `)
+	return c.HTML(http.StatusOK, spinner)
 }
 
 func (controller *Linode) SSE(c echo.Context) error {
@@ -116,7 +118,7 @@ func (controller *Linode) SSE(c echo.Context) error {
 		case <-c.Request().Context().Done():
 			return nil
 		case status := <-ch:
-			_, _ = linodeStatusEvent(status.String()).WriteTo(&buf)
+			_, _ = linodeStatusEvent(status).WriteTo(&buf)
 
 			if status == linode.StatusRunning {
 				_, _ = linodeRunningEvent.WriteTo(&buf)
@@ -124,9 +126,9 @@ func (controller *Linode) SSE(c echo.Context) error {
 				_, _ = linodeOfflineEvent.WriteTo(&buf)
 			}
 
-            if _, err := io.Copy(w, &buf); err != nil {
-                return err
-            }
+			if _, err := io.Copy(w, &buf); err != nil {
+				return err
+			}
 
 			w.Flush()
 			buf.Reset()
@@ -142,9 +144,25 @@ func NewLinode(p LinodeParams) *Linode {
 	}
 }
 
-func linodeStatusEvent(status string) event {
+func linodeStatusEvent(status linode.Status) event {
+	var title string
+	switch status {
+	case linode.StatusRunning:
+		title = "The linode instance is running"
+	case linode.StatusOffline:
+		title = "The linode instance is offline"
+	case linode.StatusRebooting:
+		title = "The linode instance is currently rebooting"
+	case linode.StatusShuttingDown:
+		title = "The linode instance is currently shutting down"
+	case linode.StatusBooting:
+		title = "The linode instance is currently booting"
+	}
+
 	return event{
 		Event: "status",
-		Data:  fmt.Sprintf(`<span>%s</span>`, status),
+		Data: fmt.Sprintf(`
+            <span title="%s">%s</span>
+        `, title, status),
 	}
 }

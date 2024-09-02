@@ -36,12 +36,12 @@
 </head>
 
 <body
-    hx-boost="true"
     class="min-h-screen flex flex-col bg-slate-100"
+    hx-boost="true"
 >
     {{ template "_header.gotmpl" . }}
 
-    <main class="grow">
+    <main class="grow" id="main">
         {{ block "content" . }}Page not found 😞{{ end }}
     </main>
 

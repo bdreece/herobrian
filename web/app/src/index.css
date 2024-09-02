@@ -1,3 +1,106 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .btn {
+        @apply rounded-full transition hover:shadow-lg hover:-translate-y-0.5;
+    }
+
+    .btn-primary {
+        @apply bg-primary hover:bg-primary-dark;
+    }
+
+    .btn-secondary {
+        @apply bg-secondary hover:bg-secondary-dark;
+    }
+
+    .sk-cube-grid {
+        width: 40px;
+        height: 40px;
+        margin-inline: auto;
+        margin-block: 1rem;
+    }
+
+    .sk-cube-grid .sk-cube {
+        width: 33%;
+        height: 33%;
+        background-color: #333;
+        float: left;
+        animation: sk-spinner 1.3s infinite ease-in-out;
+        animation: sk-spinner 1.3s infinite ease-in-out;
+    }
+
+    .sk-cube-grid .sk-cube1 {
+        animation-delay: 0.2s;
+        animation-delay: 0.2s;
+    }
+
+    .sk-cube-grid .sk-cube2 {
+        animation-delay: 0.3s;
+        animation-delay: 0.3s;
+    }
+
+    .sk-cube-grid .sk-cube3 {
+        animation-delay: 0.4s;
+        animation-delay: 0.4s;
+    }
+
+    .sk-cube-grid .sk-cube4 {
+        animation-delay: 0.1s;
+        animation-delay: 0.1s;
+    }
+
+    .sk-cube-grid .sk-cube5 {
+        animation-delay: 0.2s;
+        animation-delay: 0.2s;
+    }
+
+    .sk-cube-grid .sk-cube6 {
+        animation-delay: 0.3s;
+        animation-delay: 0.3s;
+    }
+
+    .sk-cube-grid .sk-cube7 {
+        animation-delay: 0s;
+        animation-delay: 0s;
+    }
+
+    .sk-cube-grid .sk-cube8 {
+        animation-delay: 0.1s;
+        animation-delay: 0.1s;
+    }
+
+    .sk-cube-grid .sk-cube9 {
+        animation-delay: 0.2s;
+        animation-delay: 0.2s;
+    }
+
+    @keyframes sk-spinner {
+        0%,
+        70%,
+        100% {
+            transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+        }
+
+        35% {
+            transform: scale3d(0, 0, 1);
+            transform: scale3d(0, 0, 1);
+        }
+    }
+
+    @keyframes sk-spinner {
+        0%,
+        70%,
+        100% {
+            transform: scale3d(1, 1, 1);
+            transform: scale3d(1, 1, 1);
+        }
+
+        35% {
+            transform: scale3d(0, 0, 1);
+            transform: scale3d(0, 0, 1);
+        }
+    }
+}

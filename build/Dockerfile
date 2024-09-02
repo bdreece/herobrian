@@ -17,7 +17,8 @@ RUN go mod download && \
     go mod verify
 
 COPY . .
-RUN go build -v -o /usr/bin ./cmd/herobrian
+RUN go generate -v ./... && \
+    go build -v -o /usr/bin ./cmd/herobrian
 
 FROM alpine:latest AS runtime
 

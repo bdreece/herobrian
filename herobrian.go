@@ -10,6 +10,7 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	echorenderer "github.com/bdreece/echo-renderer"
 	echovalidator "github.com/bdreece/echo-validator"
+	"github.com/gorilla/sessions"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/config"
 	"go.uber.org/fx"
@@ -18,6 +19,7 @@ import (
 	"github.com/bdreece/herobrian/internal/logger"
 	"github.com/bdreece/herobrian/internal/router"
 	"github.com/bdreece/herobrian/pkg/auth"
+	"github.com/bdreece/herobrian/pkg/identity"
 	"github.com/bdreece/herobrian/pkg/linode"
 	"github.com/bdreece/herobrian/pkg/systemd"
 	"github.com/bdreece/herobrian/web"
@@ -46,6 +48,17 @@ func New(args Args) *fx.App {
 		fx.Provide(
 			logger.Configure,
 			logger.New,
+		),
+		fx.Provide(
+			fx.Annotate(
+				identity.NewSessionStore,
+				fx.As(new(sessions.Store)),
+			),
+			fx.Annotate(
+				identity.NewCookieAuthenticator,
+				fx.As(new(identity.Authenticator)),
+				fx.As(new(identity.SignInManager)),
+			),
 		),
 		fx.Supply(&echorenderer.Options{
 			FS:      web.Templates,
