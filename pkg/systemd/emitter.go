@@ -42,7 +42,7 @@ func NewEmitter(services *ServiceFactory, logger *slog.Logger) (Emitter, error) 
 			Emitter:  e,
 			Factory:  services,
 			Instance: unit.Instance,
-			Interval: time.Second,
+			Interval: 15 * time.Second,
 			Logger:   logger,
 		})
 

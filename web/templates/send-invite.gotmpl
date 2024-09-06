@@ -1,0 +1,41 @@
+{{ template "_layout.gotmpl" . }}
+
+{{ define "content" }}
+<article>
+    <section class="card">
+        <h2 class="card-title">Send Invite</h2>
+
+        <form
+            class="grid grid-cols-[auto_auto] gap-4"
+            method="post"
+            hx-target="#send-invite-button"
+            hx-swap="outerHTML"
+        >
+            <label class="grid grid-cols-subgrid col-span-2 gap-4">
+                Role:
+
+                <select
+                    class="rounded border-2 p-1"
+                    name="role"
+                    required
+                >
+                    {{ range $role, $tooltip := .Roles }}
+                    {{ $id := printf "%d" $role }}
+                    <option title="{{ $tooltip }}" value="{{ $id }}">
+                        {{ print $role }}
+                    </option>
+                    {{ end }}
+                </select>
+            </label>
+
+            <button
+                id="send-invite-button"
+                class="btn btn-primary col-span-2"
+                type="submit"
+            >
+                Submit
+            </button>
+        </form>
+    </section>
+</article>
+{{ end }}

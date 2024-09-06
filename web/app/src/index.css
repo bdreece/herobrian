@@ -15,6 +15,18 @@
         @apply bg-secondary hover:bg-secondary-dark;
     }
 
+    .card {
+        @apply w-fit my-6 mx-auto p-4 rounded shadow-lg bg-background;
+    }
+
+    .card-title {
+        @apply text-lg font-bold mb-4;
+    }
+
+    .input {
+        @apply rounded border-2 p-1;
+    }
+
     .sk-cube-grid {
         width: 40px;
         height: 40px;
@@ -28,52 +40,42 @@
         background-color: #333;
         float: left;
         animation: sk-spinner 1.3s infinite ease-in-out;
-        animation: sk-spinner 1.3s infinite ease-in-out;
     }
 
     .sk-cube-grid .sk-cube1 {
-        animation-delay: 0.2s;
         animation-delay: 0.2s;
     }
 
     .sk-cube-grid .sk-cube2 {
         animation-delay: 0.3s;
-        animation-delay: 0.3s;
     }
 
     .sk-cube-grid .sk-cube3 {
-        animation-delay: 0.4s;
         animation-delay: 0.4s;
     }
 
     .sk-cube-grid .sk-cube4 {
         animation-delay: 0.1s;
-        animation-delay: 0.1s;
     }
 
     .sk-cube-grid .sk-cube5 {
-        animation-delay: 0.2s;
         animation-delay: 0.2s;
     }
 
     .sk-cube-grid .sk-cube6 {
         animation-delay: 0.3s;
-        animation-delay: 0.3s;
     }
 
     .sk-cube-grid .sk-cube7 {
-        animation-delay: 0s;
         animation-delay: 0s;
     }
 
     .sk-cube-grid .sk-cube8 {
         animation-delay: 0.1s;
-        animation-delay: 0.1s;
     }
 
     .sk-cube-grid .sk-cube9 {
         animation-delay: 0.2s;
-        animation-delay: 0.2s;
     }
 
     @keyframes sk-spinner {
@@ -81,11 +83,9 @@
         70%,
         100% {
             transform: scale3d(1, 1, 1);
-            transform: scale3d(1, 1, 1);
         }
 
         35% {
-            transform: scale3d(0, 0, 1);
             transform: scale3d(0, 0, 1);
         }
     }
@@ -95,11 +95,9 @@
         70%,
         100% {
             transform: scale3d(1, 1, 1);
-            transform: scale3d(1, 1, 1);
         }
 
         35% {
-            transform: scale3d(0, 0, 1);
             transform: scale3d(0, 0, 1);
         }
     }

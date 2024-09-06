@@ -13,18 +13,22 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/gobuffalo/envy v1.10.2 // indirect
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/gorilla/context v1.1.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/huandu/xstrings v1.3.3 // indirect
 	github.com/imdario/mergo v0.3.11 // indirect
+	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/kr/fs v0.1.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/sftp v1.13.5 // indirect
+	github.com/rogpeppe/go-internal v1.9.0 // indirect
 	github.com/samber/lo v1.38.1 // indirect
+	github.com/sendgrid/rest v2.6.9+incompatible // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/spf13/cast v1.3.1 // indirect
 	go.opentelemetry.io/otel v1.19.0 // indirect
@@ -45,13 +49,17 @@ require (
 	github.com/go-playground/validator/v10 v10.22.0 // indirect
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/labstack/echo-contrib v0.17.1
 	github.com/labstack/gommon v0.4.2 // indirect
+	github.com/mailgun/mailgun-go v2.0.0+incompatible
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/melbahja/goph v1.4.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/samber/slog-echo v1.14.2
+	github.com/sendgrid/sendgrid-go v3.16.0+incompatible
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	go.uber.org/config v1.4.0

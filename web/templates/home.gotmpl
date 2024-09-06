@@ -9,15 +9,15 @@
         {{ template "system-controls" . }}
     </article>
 
-    <!-- {{ template "instances" . }} -->
+    {{ template "instances" . }}
 </div>
 
 {{ end }}
 
 {{ define "server-details" }}
 
-<section class="w-fit my-6 mx-auto p-4 rounded shadow-lg bg-background">
-    <h3 class="text-lg font-bold mb-4">Server Details:</h3>
+<section class="card">
+    <h3 class="card-title">Server Details:</h3>
 
     <dl class="grid grid-cols-2 gap-2 items-center">
         <dt>Server URL:</dt>
@@ -42,8 +42,8 @@
 
 {{ define "system-controls" }}
 
-<section class="w-fit my-6 mx-auto p-4 rounded shadow-lg bg-background">
-    <h3 class="text-lg font-bold mb-4">System Controls:</h3>
+<section class="card">
+    <h3 class="card-title">System Controls:</h3>
 
     <div class="grid gap-2 content-center">
         {{ if eq .Status "running" }}
@@ -58,26 +58,25 @@
 
 {{ define "instances" }}
 
-<article
-    class="grid grid-cols-8 gap-4 w-fit my-6 mx-auto p-4 rounded shadow-lg bg-background"
->
-    <h2 class="font-bold col-span-8">Minecraft Instances:</h2>
+<article class="card">
+    <h2 class="card-title">Minecraft Instances:</h2>
 
-    {{range .Units}}
-    <h3 class="col-span-2">{{.Description}}</h3>
+    <dl class="grid grid-cols-2 gap-4">
+        {{ range .Units }}
+        <dt>{{ .Description }}</dt>
 
-    <div
-        class="grid grid-cols-subgrid gap-4 col-span-6"
-        sse-connect="/systemd/{{.Instance}}/sse"
-    >
-        <span
-            id="{{.Instance}}-status"
-            sse-swap="status"
-            hx-swap="outerHTML"
-        >
-            Loading...
-        </span>
+        <dd sse-connect="/systemd/{{ .Instance }}/sse">
+            <span
+                id="{{ .Instance }}-status"
+                class="italic"
+                title="Check if the server is running"
+                sse-swap="status"
+                hx-swap="outerHTML"
+            >
+                Loading...
+            </span>
 
+            <!--
         <button
             class="rounded-full bg-accent"
             hx-post="/systemd/{{.Instance}}/enable"
@@ -122,8 +121,10 @@
         >
             Restart
         </button>
-    </div>
-    {{end}}
+        -->
+        </dd>
+        {{ end }}
+    </dl>
 
 </article>
 

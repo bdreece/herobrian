@@ -22,6 +22,10 @@ func New(opts *Options) (*slog.Logger, error) {
 	}
 
 	w := io.MultiWriter(f, os.Stdout)
-	handler := slog.NewTextHandler(w, &opts.HandlerOptions)
+	handler := slog.NewTextHandler(w, &slog.HandlerOptions{
+		AddSource: opts.AddSource,
+		Level:     slog.Level(opts.Level),
+	})
+
 	return slog.New(handler), nil
 }

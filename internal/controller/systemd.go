@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 
 	"github.com/bdreece/herobrian/pkg/systemd"
@@ -22,13 +21,11 @@ type SystemdParams struct {
 
 	Emitter  systemd.Emitter
 	Services *systemd.ServiceFactory
-	Logger   *slog.Logger
 }
 
 type Systemd struct {
 	emitter  systemd.Emitter
 	services *systemd.ServiceFactory
-	logger   *slog.Logger
 }
 
 type systemdModel struct {
@@ -49,7 +46,7 @@ func (controller *Systemd) Enable(c echo.Context) error {
 	return c.HTML(http.StatusOK, fmt.Sprintf(`
         <span
             id="%s-status"
-            class="rounded-full bg-neutral-400 p-2"
+            class="rounded-full bg-neutral-200 p-2"
             sse-swap="status"
             hx-swap="outerHTML"
         >
@@ -72,7 +69,7 @@ func (controller *Systemd) Disable(c echo.Context) error {
 	return c.HTML(http.StatusOK, fmt.Sprintf(`
         <span
             id="%s-status"
-            class="rounded-full bg-neutral-400 p-2"
+            class="rounded-full bg-neutral-200 p-2"
             sse-swap="status"
             hx-swap="outerHTML"
         >
@@ -94,7 +91,7 @@ func (controller *Systemd) Start(c echo.Context) error {
 	return c.HTML(http.StatusOK, fmt.Sprintf(`
         <span
             id="%s-status"
-            class="rounded-full bg-neutral-400 p-2"
+            class="rounded-full bg-neutral-200 p-2"
             sse-swap="status"
             hx-swap="outerHTML"
         >
@@ -116,7 +113,7 @@ func (controller *Systemd) Stop(c echo.Context) error {
 	return c.HTML(http.StatusOK, fmt.Sprintf(`
         <span
             id="%s-status"
-            class="rounded-full bg-neutral-400 p-2"
+            class="rounded-full bg-neutral-200 p-2"
             sse-swap="status"
             hx-swap="outerHTML"
         >
@@ -138,7 +135,7 @@ func (controller *Systemd) Restart(c echo.Context) error {
 	return c.HTML(http.StatusOK, fmt.Sprintf(`
         <span
             id="%s-status"
-            class="rounded-full bg-neutral-400 p-2"
+            class="rounded-full bg-neutral-200 p-2"
             sse-swap="status"
             hx-swap="outerHTML"
         >
@@ -177,7 +174,6 @@ func (controller *Systemd) SSE(c echo.Context) error {
 				return err
 			}
 
-			controller.logger.Info("writing event", slog.String("buffer", buf.String()))
 			if _, err = io.Copy(w, &buf); err != nil {
 				return err
 			}
@@ -210,22 +206,33 @@ func NewSystemd(p SystemdParams) *Systemd {
 	return &Systemd{
 		services: p.Services,
 		emitter:  p.Emitter,
-		logger:   p.Logger,
 	}
 }
 
 func systemdStatusEvent(instance string, status systemd.Status) event {
+	var variant string
+	switch status {
+	case systemd.StatusActiveRunning, systemd.StatusEnabled:
+		variant = "bg-secondary"
+	case systemd.StatusFailed, systemd.StatusActiveExited, systemd.StatusDisabled, systemd.StatusInactive:
+		variant = "bg-red-300"
+	case systemd.StatusActiveWaiting:
+		variant = "bg-primary"
+	default:
+		variant = "bg-neutral-200"
+	}
+
 	return event{
 		Event: "status",
 		Data: fmt.Sprintf(`
             <span
                 id="%s-status"
-                class="rounded-full bg-neutral-400 p-2"
+                class="rounded-full %s p-2"
                 sse-swap="status"
                 hx-swap="outerHTML"
             >
                 %s
             </span>
-        `, instance, status),
+        `, instance, variant, status),
 	}
 }

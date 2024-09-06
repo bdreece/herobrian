@@ -3,6 +3,7 @@ import 'htmx.org/dist/ext/head-support';
 import 'htmx.org/dist/ext/sse';
 
 import './index.css';
+export { default as InviteLink } from './invite-link';
 
 const cookies = document.cookie
     .split(';')

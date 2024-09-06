@@ -7,22 +7,45 @@ import (
 	"github.com/bdreece/herobrian/pkg/linode"
 	"github.com/bdreece/herobrian/pkg/systemd"
 	"github.com/labstack/echo/v4"
+	"go.uber.org/fx"
 )
 
-func Home(client linode.Client, services *systemd.ServiceFactory, log *slog.Logger) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		log.Info("fetching instance status...")
-		status, err := client.InstanceStatus(c.Request().Context())
-		if err != nil {
-			return echo.NewHTTPError(http.StatusFailedDependency, err.Error())
-		}
+type (
+	Home struct {
+		client   linode.Client
+		services *systemd.ServiceFactory
+		logger   *slog.Logger
+	}
 
-		log.Info("got instance status", slog.String("status", status.String()))
+	HomeParams struct {
+		fx.In
 
-		return c.Render(http.StatusOK, "home.gotmpl", echo.Map{
-			"URL":    "minecraft.bdreece.dev",
-			"Units":  services.Units(),
-			"Status": status.String(),
-		})
+		LinodeClient   linode.Client
+		ServiceFactory *systemd.ServiceFactory
+		Logger         *slog.Logger
+	}
+)
+
+func (controller *Home) RenderIndex(c echo.Context) error {
+	c.Logger().Info("fetching instance status...")
+	status, err := controller.client.InstanceStatus(c.Request().Context())
+	if err != nil {
+		return echo.NewHTTPError(http.StatusFailedDependency, err.Error())
+	}
+
+	c.Logger().Info("got instance status", slog.String("status", status.String()))
+
+	return c.Render(http.StatusOK, "home.gotmpl", echo.Map{
+		"URL":    "minecraft.bdreece.dev",
+		"Units":  controller.services.Units(),
+		"Status": status.String(),
+	})
+}
+
+func NewHome(p HomeParams) *Home {
+	return &Home{
+		client:   p.LinodeClient,
+		services: p.ServiceFactory,
+		logger:   p.Logger,
 	}
 }

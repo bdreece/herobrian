@@ -1,6 +1,34 @@
-<header class="flex gap-4 m-2 p-4 rounded shadow-lg bg-background">
-    <a class="flex items-center gap-2 bg-secondary rounded p-2 hover:underline" href="/">
+<header class="flex justify-between m-2 p-4 rounded shadow-lg bg-background">
+    <a
+        class="flex items-center gap-2 bg-secondary rounded p-2 hover:underline"
+        href="/"
+    >
         <span class="iconify tabler--brand-minecraft"></span>
         <h1 class="text-xl font-bold">herobrian</h1>
     </a>
+
+    {{ with claims }}
+    <div class="flex items-center gap-4">
+        <span class="flex items-center gap-2 bg-neutral-200 rounded p-2">
+            Welcome, {{ .Username }}
+            <small class="bg-secondary rounded-full text-sm py-1 px-2">{{ role }}</small>
+        </span>
+
+        {{ if ge .Role 1 }}
+        <a
+            class="bg-neutral-200 rounded p-2 hover:underline"
+            href="/invite"
+        >
+            Invite User
+        </a>
+        {{ end }}
+
+        <a
+            class="bg-neutral-200 rounded p-2 hover:underline"
+            href="/logout"
+        >
+            Logout
+        </a>
+    </div>
+    {{ end }}
 </header>
