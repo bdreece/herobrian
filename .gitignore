@@ -168,4 +168,5 @@ dist
 bin
 tmp
 configs/settings.yml
+configs/settings.*.yml
 *.sql.go

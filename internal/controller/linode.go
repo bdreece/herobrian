@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"log/slog"
+    "log/slog"
 	"net/http"
+	"time"
 
+	"github.com/bdreece/herobrian/pkg/cron"
 	"github.com/bdreece/herobrian/pkg/linode"
 	"github.com/labstack/echo/v4"
-	"go.uber.org/fx"
+	"golang.org/x/sync/singleflight"
 )
 
 var (
@@ -58,18 +60,12 @@ var (
     `
 )
 
-type LinodeParams struct {
-	fx.In
-
-	Client  linode.Client
-	Emitter linode.Emitter
-	Logger  *slog.Logger
-}
+const key string = "linode"
 
 type Linode struct {
-	client  linode.Client
-	emitter linode.Emitter
-	logger  *slog.Logger
+	client linode.Client
+    logger *slog.Logger
+	group  singleflight.Group
 }
 
 func (controller *Linode) Boot(c echo.Context) error {
@@ -100,48 +96,59 @@ func (controller *Linode) Shutdown(c echo.Context) error {
 }
 
 func (controller *Linode) SSE(c echo.Context) error {
-	controller.logger.Info("subscribing to server-sent events")
+	var (
+		buf      bytes.Buffer
+		interval = 2 * time.Second
+	)
+
+	c.Logger().Info("subscribing to server-sent events")
+
 	w := c.Response()
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 	w.Flush()
 
-	ch := make(chan linode.Status, 1)
-	sub := controller.emitter.Subscribe(linode.TopicStatus, ch)
-	defer controller.emitter.Unsubscribe(linode.TopicStatus, sub)
+	for range cron.Tick(c.Request().Context(), time.Now().Round(interval), interval) {
+        result := <-controller.group.DoChan(key, func() (interface{}, error) {
+            controller.logger.Info("requesting linode status...")
+			return controller.client.InstanceStatus(c.Request().Context())
+		})
 
-	var buf bytes.Buffer
-
-	for {
-		select {
-		case <-c.Request().Context().Done():
-			return nil
-		case status := <-ch:
-			_, _ = linodeStatusEvent(status).WriteTo(&buf)
-
-			if status == linode.StatusRunning {
-				_, _ = linodeRunningEvent.WriteTo(&buf)
-			} else if status == linode.StatusOffline {
-				_, _ = linodeOfflineEvent.WriteTo(&buf)
-			}
-
-			if _, err := io.Copy(w, &buf); err != nil {
-				return err
-			}
-
-			w.Flush()
-			buf.Reset()
+		if result.Err != nil {
+			return result.Err
 		}
+
+        if result.Shared {
+            controller.logger.Info("linode state result was shared!")
+        }
+
+		status := *result.Val.(*linode.Status)
+        controller.logger.Debug("got status", slog.String("status", status.String()))
+		_, _ = linodeStatusEvent(status).WriteTo(&buf)
+
+		if status == linode.StatusRunning {
+			_, _ = linodeRunningEvent.WriteTo(&buf)
+		} else if status == linode.StatusOffline {
+			_, _ = linodeOfflineEvent.WriteTo(&buf)
+		}
+
+		if _, err := io.Copy(w, &buf); err != nil {
+			return err
+		}
+
+		w.Flush()
+		buf.Reset()
 	}
+
+    return nil
 }
 
-func NewLinode(p LinodeParams) *Linode {
+func NewLinode(client linode.Client, logger *slog.Logger) *Linode {
 	return &Linode{
-		client:  p.Client,
-		emitter: p.Emitter,
-		logger:  p.Logger,
-	}
+        client: client,
+        logger: logger,
+    }
 }
 
 func linodeStatusEvent(status linode.Status) event {

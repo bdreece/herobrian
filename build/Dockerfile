@@ -22,9 +22,12 @@ RUN go generate -v ./... && \
 
 FROM alpine:latest AS runtime
 
+COPY ./configs/schema.sql /usr/share/herobrian/
 COPY ./configs/settings.yml /etc/herobrian/
 COPY ./web/static /usr/share/herobrian/static/
 COPY --from=go-build /usr/bin/herobrian /usr/bin/
 COPY --from=npm-build /usr/src/herobrian/web/app/dist /usr/share/herobrian/app/
+
+VOLUME /var/opt/herobrian
 
 CMD [ "herobrian", "-c", "/etc/herobrian/settings.yml" ]

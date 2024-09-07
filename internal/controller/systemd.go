@@ -5,27 +5,24 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
+	"time"
 
+	"github.com/bdreece/herobrian/pkg/cron"
 	"github.com/bdreece/herobrian/pkg/systemd"
 	"github.com/labstack/echo/v4"
-	"go.uber.org/fx"
+	"golang.org/x/sync/singleflight"
 )
 
 var (
 	ErrInstanceNotFound = errors.New("systemd unit instance not found")
 )
 
-type SystemdParams struct {
-	fx.In
-
-	Emitter  systemd.Emitter
-	Services *systemd.ServiceFactory
-}
-
 type Systemd struct {
-	emitter  systemd.Emitter
 	services *systemd.ServiceFactory
+	logger   *slog.Logger
+	group    singleflight.Group
 }
 
 type systemdModel struct {
@@ -42,7 +39,6 @@ func (controller *Systemd) Enable(c echo.Context) error {
 		return err
 	}
 
-	controller.emitter.Publish(svc.Unit().Instance, systemd.StatusEnabled)
 	return c.HTML(http.StatusOK, fmt.Sprintf(`
         <span
             id="%s-status"
@@ -65,7 +61,6 @@ func (controller *Systemd) Disable(c echo.Context) error {
 		return err
 	}
 
-	controller.emitter.Publish(svc.Unit().Instance, systemd.StatusDisabled)
 	return c.HTML(http.StatusOK, fmt.Sprintf(`
         <span
             id="%s-status"
@@ -145,6 +140,11 @@ func (controller *Systemd) Restart(c echo.Context) error {
 }
 
 func (controller *Systemd) SSE(c echo.Context) error {
+	var (
+		buf      bytes.Buffer
+		interval = 15 * time.Second
+	)
+
 	model := new(systemdModel)
 	if err := c.Bind(model); err != nil {
 		return err
@@ -154,34 +154,52 @@ func (controller *Systemd) SSE(c echo.Context) error {
 		return err
 	}
 
+	service, err := controller.services.Create(model.Instance)
+	if err != nil {
+		return err
+	}
+
 	w := c.Response()
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
+	for range cron.Tick(c.Request().Context(), time.Now().Round(interval), interval) {
+        key := fmt.Sprintf("systemd-status-%s", model.Instance)
+		result := <-controller.group.DoChan(key, func() (interface{}, error) {
+			controller.logger.Info("requesting instance state", slog.String("instance", model.Instance))
+			return service.Status(c.Request().Context())
+		})
 
-	statusch := make(chan systemd.Status, 1)
-	sub := controller.emitter.Subscribe(model.Instance, statusch)
-	defer controller.emitter.Unsubscribe(model.Instance, sub)
+		if result.Err != nil {
+            controller.logger.Error("failed to get instance status",
+                slog.String("instance", model.Instance))
 
-	var buf bytes.Buffer
-	for {
-		select {
-		case <-c.Request().Context().Done():
-			return nil
-		case status := <-statusch:
-			_, err := systemdStatusEvent(model.Instance, status).WriteTo(&buf)
-			if err != nil {
-				return err
-			}
-
-			if _, err = io.Copy(w, &buf); err != nil {
-				return err
-			}
-
-			w.Flush()
-			buf.Reset()
+			return result.Err
 		}
+
+		if result.Shared {
+			controller.logger.Info("instance state result was shared!")
+		}
+
+		status := *result.Val.(*systemd.Status)
+        controller.logger.Info("got instance status",
+            slog.String("instance", model.Instance),
+            slog.String("status", status.String()))
+
+		_, err = systemdStatusEvent(model.Instance, status).WriteTo(&buf)
+		if err != nil {
+			return err
+		}
+
+		if _, err = io.Copy(w, &buf); err != nil {
+			return err
+		}
+
+		w.Flush()
+		buf.Reset()
 	}
+
+	return nil
 }
 
 func (controller *Systemd) resolveService(c echo.Context) (*systemd.Service, error) {
@@ -202,10 +220,10 @@ func (controller *Systemd) resolveService(c echo.Context) (*systemd.Service, err
 	return svc, nil
 }
 
-func NewSystemd(p SystemdParams) *Systemd {
+func NewSystemd(services *systemd.ServiceFactory, logger *slog.Logger) *Systemd {
 	return &Systemd{
-		services: p.Services,
-		emitter:  p.Emitter,
+		services: services,
+		logger:   logger,
 	}
 }
 
