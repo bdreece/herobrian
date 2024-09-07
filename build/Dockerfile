@@ -17,6 +17,9 @@ RUN go mod download && \
     go mod verify
 
 COPY . .
+ENV CGO_ENABLED 1
+RUN apk update --no-cache &&
+    apk add musl-dev gcc
 RUN go generate -v ./... && \
     go build -v -o /usr/bin ./cmd/herobrian
 
