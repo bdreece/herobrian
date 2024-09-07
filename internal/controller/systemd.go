@@ -164,15 +164,15 @@ func (controller *Systemd) SSE(c echo.Context) error {
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
 	for range cron.Tick(c.Request().Context(), time.Now().Round(interval), interval) {
-        key := fmt.Sprintf("systemd-status-%s", model.Instance)
+		key := fmt.Sprintf("systemd-status-%s", model.Instance)
 		result := <-controller.group.DoChan(key, func() (interface{}, error) {
 			controller.logger.Info("requesting instance state", slog.String("instance", model.Instance))
 			return service.Status(c.Request().Context())
 		})
 
 		if result.Err != nil {
-            controller.logger.Error("failed to get instance status",
-                slog.String("instance", model.Instance))
+			controller.logger.Error("failed to get instance status",
+				slog.String("instance", model.Instance))
 
 			return result.Err
 		}
@@ -182,9 +182,9 @@ func (controller *Systemd) SSE(c echo.Context) error {
 		}
 
 		status := *result.Val.(*systemd.Status)
-        controller.logger.Info("got instance status",
-            slog.String("instance", model.Instance),
-            slog.String("status", status.String()))
+		controller.logger.Info("got instance status",
+			slog.String("instance", model.Instance),
+			slog.String("status", status.String()))
 
 		_, err = systemdStatusEvent(model.Instance, status).WriteTo(&buf)
 		if err != nil {

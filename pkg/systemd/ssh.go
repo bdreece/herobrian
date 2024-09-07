@@ -11,7 +11,7 @@ import (
 
 type sshClient struct {
 	*goph.Client
-    mu sync.Mutex
+	mu sync.Mutex
 }
 
 type SSH struct {
@@ -35,8 +35,8 @@ func ConfigureSSH(provider config.Provider) (*ClientOptions[SSH], error) {
 }
 
 func (c *sshClient) Status(ctx context.Context, unit Unit) (*Status, error) {
-    c.mu.Lock()
-    defer c.mu.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	out, _ := c.Run(fmt.Sprintf("systemctl status %s", unit))
 	// if err != nil {
 	// 	return nil, fmt.Errorf("failed to get systemd service status %q: %w", unit, err)
@@ -51,8 +51,8 @@ func (c *sshClient) Status(ctx context.Context, unit Unit) (*Status, error) {
 }
 
 func (c *sshClient) Enable(ctx context.Context, unit Unit) error {
-    c.mu.Lock()
-    defer c.mu.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	_, err := c.Run(fmt.Sprintf("sudo systemctl enable %s", unit))
 	if err != nil {
 		return fmt.Errorf("failed to enable systemd service %q: %w", unit, err)
@@ -62,8 +62,8 @@ func (c *sshClient) Enable(ctx context.Context, unit Unit) error {
 }
 
 func (c *sshClient) Disable(ctx context.Context, unit Unit) error {
-    c.mu.Lock()
-    defer c.mu.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	_, err := c.Run(fmt.Sprintf("sudo systemctl disable %s", unit))
 	if err != nil {
 		return fmt.Errorf("failed to disable systemd service %q: %w", unit, err)
@@ -73,8 +73,8 @@ func (c *sshClient) Disable(ctx context.Context, unit Unit) error {
 }
 
 func (c *sshClient) Start(ctx context.Context, unit Unit) error {
-    c.mu.Lock()
-    defer c.mu.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	_, err := c.Run(fmt.Sprintf("sudo systemctl stop %s", unit))
 	if err != nil {
 		return fmt.Errorf("failed to start systemd service %q: %w", unit, err)
@@ -84,8 +84,8 @@ func (c *sshClient) Start(ctx context.Context, unit Unit) error {
 }
 
 func (c *sshClient) Stop(ctx context.Context, unit Unit) error {
-    c.mu.Lock()
-    defer c.mu.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	_, err := c.Run(fmt.Sprintf("sudo systemctl stop %s", unit))
 	if err != nil {
 		return fmt.Errorf("failed to stop systemd service %q: %w", unit, err)
@@ -95,8 +95,8 @@ func (c *sshClient) Stop(ctx context.Context, unit Unit) error {
 }
 
 func (c *sshClient) Restart(ctx context.Context, unit Unit) error {
-    c.mu.Lock()
-    defer c.mu.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	_, err := c.Run(fmt.Sprintf("sudo systemctl restart %s", unit))
 	if err != nil {
 		return fmt.Errorf("failed to restart systemd service %q: %w", unit, err)
@@ -116,5 +116,5 @@ func NewSSH(opts *ClientOptions[SSH]) (Client, error) {
 		return nil, fmt.Errorf("failed to dial remote address %q: %w", opts.Transport.Address, err)
 	}
 
-    return &sshClient{Client: c}, err
+	return &sshClient{Client: c}, err
 }

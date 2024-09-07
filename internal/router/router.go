@@ -46,11 +46,10 @@ func (r Router) MapAuth(auth *controller.Auth) {
 }
 
 func (r Router) MapInvite(invite *controller.Invite) {
-	g := r.Group("/invite")
-	g.GET("", invite.RenderSendInvite, r.authenticate, r.authorize, r.allowModerator)
-	g.POST("", invite.SendInvite, r.authenticate, r.authorize, r.allowModerator)
-	g.GET("/:token", invite.RenderAcceptInvite)
-	g.POST("/:token", invite.AcceptInvite)
+	r.GET("/invite", invite.RenderSendInvite, r.authenticate, r.authorize, r.allowModerator)
+	r.POST("/invite", invite.SendInvite, r.authenticate, r.authorize, r.allowModerator)
+	r.GET("/invite/:token", invite.RenderAcceptInvite)
+	r.POST("/invite/:token", invite.AcceptInvite)
 }
 
 func (r Router) MapLinode(linode *controller.Linode) {

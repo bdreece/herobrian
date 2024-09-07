@@ -8,8 +8,6 @@
 
         {{ template "system-controls" . }}
     </article>
-
-    {{ template "instances" . }}
 </div>
 
 {{ end }}
@@ -58,6 +56,7 @@
 
 {{ define "instances" }}
 
+<!--
 <article class="card">
     <h2 class="card-title">Minecraft Instances:</h2>
 
@@ -76,7 +75,6 @@
                 Loading...
             </span>
 
-            <!--
         <button
             class="rounded-full bg-accent"
             hx-post="/systemd/{{.Instance}}/enable"
@@ -121,12 +119,12 @@
         >
             Restart
         </button>
-        -->
         </dd>
         {{ end }}
     </dl>
 
 </article>
+        -->
 
 {{ end }}
 
