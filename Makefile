@@ -36,7 +36,7 @@ build/go: restore/go
 	@mkdir -p bin
 	go build -v -o $(abspath ./bin) ./...
 	
-build/npm: restore/npm generate
+build/npm: restore/npm
 	npm run -ws --if-present build
 
 ## generate: run go source generator
@@ -51,7 +51,7 @@ run:
 
 ## test: run all tests
 .PHONY: test
-test:
+test: restore
 	go test -v ./...
 	npm run -ws --if-present test
 
