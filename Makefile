@@ -1,6 +1,9 @@
 # herobrian v1.2.0
 # Copyright (C) 2024 Brian Reece
 
+NPROCS = $(shell grep -c 'processor' /proc/cpuinfo)
+MAKEFLAGS += -j$(NPROCS)
+
 all: build
 
 # ================ #
@@ -14,11 +17,27 @@ help:
 	@echo 'Scripts:'
 	@sed -n 's/^## //p' ${MAKEFILE_LIST} | column -t -s ':' |  sed -e 's/^/  /'
 
+## restore: restore dependencies
+.PHONY: restore restore/go restore/npm
+restore: restore/go restore/npm
+
+restore/go: generate
+	go mod download
+	go mod verify
+
+restore/npm:
+	npm ci
+
 ## build: build the application
-.PHONY: build
-build: | bin generate
-	npm run -ws --if-present build
+.PHONY: build build/go build/npm
+build: build/go build/npm
+
+build/go: restore/go
+	@mkdir -p bin
 	go build -v -o $(abspath ./bin) ./...
+	
+build/npm: restore/npm generate
+	npm run -ws --if-present build
 
 ## generate: run go source generator
 .PHONY: generate
@@ -50,8 +69,3 @@ install:
 	install -m 0644 -Dt /etc/herobrian configs/schema.sql
 	install -m 0644 -Dt /etc/herobrian configs/settings.production.yml
 	install -m 0755 -t /usr/bin bin/herobrian
-
-bin:
-	@mkdir -p $@
-
-

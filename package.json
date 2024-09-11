@@ -5,6 +5,9 @@
     "version": "1.2.0",
     "author": "Brian Reece <me@bdreece.dev>",
     "license": "MIT",
+    "scripts": {
+        "prepare": "husky"
+    },
     "workspaces": [
         "web/app"
     ],
@@ -25,9 +28,6 @@
         "*.js": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint --cache --fix",
         "*.css": "stylelint --fix",
         "*.{js,css,md}": "prettier --write"
-    },
-    "scripts": {
-        "prepare": "husky install"
     },
     "eslintConfig": {
         "root": true,
