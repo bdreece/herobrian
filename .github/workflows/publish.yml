@@ -1,10 +1,11 @@
+name: publish
+on:
+  push:
+    branches: [ "main" ]
+
 permissions:
   id-token: write
-
-on:
-  workflow_run:
-    workflows: [Build]
-    types: [completed]
+  contents: read
 
 jobs:
   push:
