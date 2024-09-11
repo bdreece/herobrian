@@ -41,6 +41,16 @@ test:
 watch:
 	air -c configs/air.toml
 
+## install: install the application
+.PHONY: install
+install:
+	install -m 0644 -Dt /usr/share/herobrian/app web/app/dist 
+	install -m 0644 -Dt /usr/share/herobrian/static web/static
+	install -m 0644 -Dt /usr/share/herobrian/templates web/templates
+	install -m 0644 -Dt /etc/herobrian configs/schema.sql
+	install -m 0644 -Dt /etc/herobrian configs/settings.production.yml
+	install -m 0755 -t /usr/bin bin/herobrian
+
 bin:
 	@mkdir -p $@
 

@@ -1,0 +1,13 @@
+[Unit]
+Description=herobrian
+After=network.target docker.service
+
+[Service]
+ExecStart=/usr/bin/herobrian
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
