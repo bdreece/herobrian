@@ -3,11 +3,11 @@ Description=herobrian
 After=network.target docker.service
 
 [Service]
-ExecStart=/usr/bin/herobrian
-ExecReload=/bin/kill -HUP $MAINPID
+ExecStart=/usr/bin/docker run --name herobrian herobrian:latest
+ExecReload=/usr/bin/docker stop herobrian
 KillMode=process
 Restart=on-failure
-RestartSec=5s
+RestartSec=15s
 
 [Install]
 WantedBy=multi-user.target
