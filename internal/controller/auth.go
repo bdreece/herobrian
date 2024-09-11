@@ -16,9 +16,9 @@ import (
 
 type (
 	Auth struct {
-		db      database.Querier
-		client  email.Client
-		mgr     identity.SignInManager
+		db     database.Querier
+		client email.Client
+		mgr    identity.SignInManager
 	}
 
 	AuthParams struct {

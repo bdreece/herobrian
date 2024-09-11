@@ -33,4 +33,4 @@ COPY --from=npm-build /usr/src/herobrian/web/app/dist /usr/share/herobrian/app/
 
 VOLUME /var/opt/herobrian
 
-CMD [ "herobrian", "-c", "/etc/herobrian/settings.yml" ]
+CMD [ "herobrian" ]

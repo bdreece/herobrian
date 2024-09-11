@@ -34,16 +34,16 @@ import (
 )
 
 type Args struct {
-	Port       int
-	ConfigPath string
-    Environment string
+	Port        int
+	ConfigPath  string
+	Environment string
 }
 
 var (
 	Config = fx.Module("config",
 		fx.Provide(func(args Args) (config.Provider, error) {
-            basePath := filepath.Join(args.ConfigPath, "settings.yml")
-            overridePath := filepath.Join(args.ConfigPath, fmt.Sprintf("settings.%s.yml", args.Environment))
+			basePath := filepath.Join(args.ConfigPath, "settings.yml")
+			overridePath := filepath.Join(args.ConfigPath, fmt.Sprintf("settings.%s.yml", args.Environment))
 			return config.NewYAML(
 				config.Permissive(),
 				config.Expand(os.LookupEnv),
@@ -86,16 +86,16 @@ var (
 		// 	),
 		// ),
 		fx.Provide(
-		// 	fx.Annotate(
-		// 		func(provider config.Provider) (*token.Options, error) {
-		// 			return token.Configure("password_reset", provider)
-		// 		},
-		// 		fx.ResultTags(`name:"password_reset"`),
-		// 	),
-		// 	fx.Annotate(
-		// 		token.NewHandler[token.PasswordResetClaims],
-		// 		fx.ParamTags(`name:"password_reset"`),
-		// 	),
+			// 	fx.Annotate(
+			// 		func(provider config.Provider) (*token.Options, error) {
+			// 			return token.Configure("password_reset", provider)
+			// 		},
+			// 		fx.ResultTags(`name:"password_reset"`),
+			// 	),
+			// 	fx.Annotate(
+			// 		token.NewHandler[token.PasswordResetClaims],
+			// 		fx.ParamTags(`name:"password_reset"`),
+			// 	),
 			fx.Annotate(
 				func(provider config.Provider) (*token.Options, error) {
 					return token.Configure("user_invite", provider)
