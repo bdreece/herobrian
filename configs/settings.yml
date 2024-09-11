@@ -1,0 +1,48 @@
+database:
+  schema: configs/schema.sql
+  super_user:
+    username: $HEROBRIAN_SUPER_USER_NAME
+    password: $HEROBRIAN_SUPER_USER_PASSWORD
+
+linode:
+  instance_id: $HEROBRIAN_LINODE_INSTANCE_ID
+  access_token: $HEROBRIAN_LINODE_ACCESS_TOKEN
+
+session:
+  signing_key: $HEROBRIAN_SESSION_SIGNING_KEY
+  encryption_key: $HEROBRIAN_SESSION_ENCRYPTING_KEY
+  cookie:
+    name: herobrian-identity
+    path: /
+    max_age: 86400
+    http_only: true
+
+systemd:
+  transport:
+    user: $HEROBRIAN_MINECRAFT_SERVER_USER
+    address: $HEROBRIAN_MINECRAFT_SERVER_ADDRESS
+    key_path: '/home/bdreece/.ssh/id_ecdsa'
+
+  units:
+    - description: Vanilla
+      name: minecraft
+      instance: default
+
+    - description: FTB Direwolf20
+      name: minecraft
+      instance: ftb-direwolf20
+
+    - description: FTB Omnia
+      name: minecraft
+      instance: ftb-omnia
+
+    - description: FTB Revelation
+      name: minecraft
+      instance: ftb-revelation
+
+token:
+  user_invite:
+    audience: herobrian.bdreece.dev
+    issuer: herobrian.bdreece.dev
+    valid_for: 1h
+    secret_key: $HEROBRIAN_INVITE_JWT_SECRET

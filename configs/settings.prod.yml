@@ -1,0 +1,15 @@
+database:
+  connection_string: 'file:./var/opt/herobrian/db.sqlite3'
+
+logger:
+  level: 4
+  directory: /var/log/herobrian
+
+router:
+  app_dir: /usr/share/herobrian/app
+  static_dir: /usr/share/herobrian/static
+
+systemd:
+  transport:
+    key_path: /etc/herobrian/id_ecdsa
+

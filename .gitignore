@@ -167,6 +167,4 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/go,node
 bin
 tmp
-configs/settings.yml
-configs/settings.*.yml
 *.sql.go

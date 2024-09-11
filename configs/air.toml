@@ -3,11 +3,11 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-  args_bin = []
+  args_bin = ["-c", "configs", "-e", "dev"]
   bin = "./bin/herobrian"
   cmd = "make build"
   delay = 1000
-  exclude_dir = ["bin", "tmp", "web/app/dist"]
+  exclude_dir = ["bin", "tmp", "web/app/dist", "node_modules"]
   exclude_file = []
   exclude_regex = ["_test.go", "_string.go", ".sql.go"]
   exclude_unchanged = false

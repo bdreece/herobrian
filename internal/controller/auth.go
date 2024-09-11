@@ -9,7 +9,6 @@ import (
 	"github.com/bdreece/herobrian/pkg/database"
 	"github.com/bdreece/herobrian/pkg/email"
 	"github.com/bdreece/herobrian/pkg/identity"
-	"github.com/bdreece/herobrian/pkg/token"
 	"github.com/labstack/echo/v4"
 	"go.uber.org/fx"
 	"golang.org/x/crypto/bcrypt"
@@ -20,7 +19,6 @@ type (
 		db      database.Querier
 		client  email.Client
 		mgr     identity.SignInManager
-		handler token.Handler[token.PasswordResetClaims]
 	}
 
 	AuthParams struct {
@@ -29,7 +27,6 @@ type (
 		Querier       database.Querier
 		EmailClient   email.Client
 		SignInManager identity.SignInManager
-		TokenHandler  token.Handler[token.PasswordResetClaims]
 	}
 
 	authLoginModel struct {
@@ -96,5 +93,5 @@ func (controller *Auth) RenderLogout(c echo.Context) error {
 }
 
 func NewAuth(p AuthParams) *Auth {
-	return &Auth{p.Querier, p.EmailClient, p.SignInManager, p.TokenHandler}
+	return &Auth{p.Querier, p.EmailClient, p.SignInManager}
 }

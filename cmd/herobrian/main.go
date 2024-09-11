@@ -13,7 +13,8 @@ func main() {
 	defer quit()
 
 	flag.IntVar(&args.Port, "p", 3000, "port")
-	flag.StringVar(&args.ConfigPath, "c", "configs/settings.yml", "config path")
+	flag.StringVar(&args.ConfigPath, "c", "/etc/herobrian", "config path")
+    flag.StringVar(&args.Environment, "e", "prod", "environment")
 	flag.Parse()
 
 	herobrian.New(args).Run()

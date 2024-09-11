@@ -7,6 +7,7 @@ import (
 	"io"
 	"maps"
 	"os"
+	"path/filepath"
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
@@ -32,13 +33,22 @@ import (
 	"github.com/bdreece/herobrian/web"
 )
 
+type Args struct {
+	Port       int
+	ConfigPath string
+    Environment string
+}
+
 var (
 	Config = fx.Module("config",
 		fx.Provide(func(args Args) (config.Provider, error) {
+            basePath := filepath.Join(args.ConfigPath, "settings.yml")
+            overridePath := filepath.Join(args.ConfigPath, fmt.Sprintf("settings.%s.yml", args.Environment))
 			return config.NewYAML(
 				config.Permissive(),
 				config.Expand(os.LookupEnv),
-				config.File(args.ConfigPath),
+				config.File(basePath),
+				config.File(overridePath),
 			)
 		}),
 	)
@@ -76,16 +86,16 @@ var (
 		// 	),
 		// ),
 		fx.Provide(
-			fx.Annotate(
-				func(provider config.Provider) (*token.Options, error) {
-					return token.Configure("password_reset", provider)
-				},
-				fx.ResultTags(`name:"password_reset"`),
-			),
-			fx.Annotate(
-				token.NewHandler[token.PasswordResetClaims],
-				fx.ParamTags(`name:"password_reset"`),
-			),
+		// 	fx.Annotate(
+		// 		func(provider config.Provider) (*token.Options, error) {
+		// 			return token.Configure("password_reset", provider)
+		// 		},
+		// 		fx.ResultTags(`name:"password_reset"`),
+		// 	),
+		// 	fx.Annotate(
+		// 		token.NewHandler[token.PasswordResetClaims],
+		// 		fx.ParamTags(`name:"password_reset"`),
+		// 	),
 			fx.Annotate(
 				func(provider config.Provider) (*token.Options, error) {
 					return token.Configure("user_invite", provider)
@@ -162,11 +172,6 @@ func New(args Args) *fx.App {
 		Infrastructure,
 		Application,
 	)
-}
-
-type Args struct {
-	Port       int
-	ConfigPath string
 }
 
 func (args Args) Addr() string {

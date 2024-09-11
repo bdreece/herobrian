@@ -1,0 +1,14 @@
+database:
+  connection_string: 'file:./tmp/herobrian.db'
+
+logger:
+  level: -4
+  directory: tmp
+
+router:
+  app_dir: web/app/dist
+  static_dir: web/static
+
+systemd:
+  transport:
+    key_path: /home/bdreece/.ssh/id_ecdsa
