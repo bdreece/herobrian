@@ -13,6 +13,9 @@ FROM golang:1.22.5-alpine AS go-build
 WORKDIR /usr/src/herobrian
 
 COPY go.mod go.sum ./
+RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest && \
+    go install golang.org/x/tools/cmd/stringer@latest
+
 RUN go mod download && \
     go mod verify
 
