@@ -29,7 +29,7 @@ RUN go generate -v ./... && \
 
 FROM alpine:latest AS runtime
 
-COPY ./configs/schema.sql /etc/herobrian
+COPY ./configs/schema.sql /etc/herobrian/
 COPY ./configs/settings.yml /etc/herobrian/
 COPY ./configs/settings.prod.yml /etc/herobrian/
 COPY ./web/static /usr/share/herobrian/static/
