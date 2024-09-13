@@ -15,6 +15,10 @@ func New(opts *Options) (*slog.Logger, error) {
 		perm fs.FileMode = 0o0644
 	)
 
+	if err := os.MkdirAll(opts.Directory, perm); err != nil {
+		return nil, fmt.Errorf("failed to create log directory %q: %w", opts.Directory, err)
+	}
+
 	path := filepath.Join(opts.Directory, "herobrian.log")
 	f, err := os.OpenFile(path, flag, perm)
 	if err != nil {
