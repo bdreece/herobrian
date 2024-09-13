@@ -1,5 +1,4 @@
 database:
-  schema: configs/schema.sql
   super_user:
     username: $HEROBRIAN_SUPER_USER_NAME
     password: $HEROBRIAN_SUPER_USER_PASSWORD
@@ -21,7 +20,6 @@ systemd:
   transport:
     user: $HEROBRIAN_MINECRAFT_SERVER_USER
     address: $HEROBRIAN_MINECRAFT_SERVER_ADDRESS
-    key_path: '/home/bdreece/.ssh/id_ecdsa'
 
   units:
     - description: Vanilla

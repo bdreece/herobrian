@@ -1,4 +1,5 @@
 database:
+  schema: configs/schema.sql
   connection_string: 'file:./tmp/herobrian.db'
 
 logger:

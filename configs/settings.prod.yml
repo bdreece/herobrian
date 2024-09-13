@@ -1,4 +1,5 @@
 database:
+  schema: /etc/herobrian/schema.sql
   connection_string: 'file:./var/opt/herobrian/db.sqlite3'
 
 logger:
