@@ -1,0 +1,55 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  CONFIGURATION: debug
+  ENVIRONMENT: development
+  VERBOSE: true
+
+  BASE_BIN_DIR: { ref: printf "%s/bin" .ROOT_DIR }
+  BASE_OBJ_DIR: { ref: printf "%s/_obj" .ROOT_DIR }
+
+  BIN_DIR: { ref: list .BASE_BIN_DIR .CONFIGURATION | join "/" }
+  OBJ_DIR: { ref: list .BASE_OBJ_DIR .CONFIGURATION | join "/" }
+
+  TAG:
+    sh: git describe --tags --abbrev=0 --exact-match 2>/dev/null || echo "unreleased"
+  BRANCH:
+    sh: git status -b --porcelain | head -1 | cut -d' ' -f2
+  COMMIT:
+    sh: git rev-parse HEAD
+
+dotenv: [.env, ".env.{{.ENVIRONMENT}}"]
+
+includes:
+  go: ./Go.yml
+
+tasks:
+  default:
+    cmd: { task: watch }
+
+  clean:
+    desc: Clean all build artifacts
+    aliases: [c]
+    deps: [go:clean]
+
+  restore:
+    desc: Restore all dependencies
+    aliases: [r]
+    deps: [go:restore]
+
+  build:
+    desc: Build application
+    aliases: [b]
+    deps: [go:build]
+
+  watch:
+    desc: Launch application with live reload
+    aliases: [w]
+    deps: [go:watch]
+
+  test:
+    desc: Run test suites
+    aliases: [t]
+    deps: [go:test]

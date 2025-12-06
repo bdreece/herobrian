@@ -1,0 +1,127 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  ## `go` Variables
+  GO_PKG: ./...
+  GO_FLAGS:
+    - -v={{.VERBOSE}}
+
+  ### `go build` Variables
+  GO_COMPRESSDWARF: { ref: .CONFIGURATION | eq "release" }
+  GO_DEBUGINFO: { ref: .CONFIGURATION | ne "release" }
+  GO_DWARFSYMBOLS: { ref: .CONFIGURATION | ne "release" }
+  GO_LDFLAGS:
+    - -X {{.CONFIGURATION | printf "main.mode=%s"}}
+    - -X {{.TAG | printf "main.version=%s"}}
+    - -X {{.BRANCH | printf "main.branch=%s"}}
+    - -X {{.COMMIT | printf "main.commit=%s"}}
+    - -w={{not .GO_DWARFSYMBOLS}}
+    - -s={{not .GO_DEBUGINFO}}
+    - -compressdwarf={{.GO_COMPRESSDWARF}}
+
+  GO_BUILDMODE: pie
+  GO_MOD: readonly
+  GO_MODCACHERW: true
+  GO_TAGS: [timetzdata]
+  GO_TRIMPATH: { ref: .CONFIGURATION | eq "release" }
+  GO_BUILDFLAGS:
+    - -buildmode={{.GO_BUILDMODE}}
+    - -mod={{.GO_MOD}}
+    - -modcacherw={{.GO_MODCACHERW}}
+    - -ldflags={{.GO_LDFLAGS | join " " | squote}}
+    - -tags={{.GO_TAGS | join "," | squote}}
+    - -trimpath={{.GO_TRIMPATH}}
+
+  ### `go test` Variables
+  GO_TESTS: { ref: .GO_PKG }
+  GO_TESTCOUNT: 1
+  GO_TESTSHUFFLE: true
+  GO_TESTSKIP: ""
+  GO_TESTFLAGS:
+    - -count={{.GO_TESTCOUNT}}
+    - -shuffle={{.GO_TESTSHUFFLE | ternary "on" "off"}}
+    - -skip={{.GO_TESTSKIP | printf "/%s/"}}
+
+  ## `go tool air` Variables
+  AIR_TMPDIR: { ref: printf "%s/.air" .BASE_OBJ_DIR }
+  AIR_ARGS: ["--level=debug"]
+  AIR_BIN: { ref: printf "%s/%s" .BIN_DIR .PROJECT }
+  AIR_CMD: "go tool task go:build"
+  AIR_EXCLUDE_DIR:
+    - node_modules
+    - testdata
+  AIR_EXCLUDE_REGEX:
+    - _test.go
+    - _string.go
+  AIR_INCLUDE_EXT:
+    - go
+    - tmpl
+  AIR_KILL_DELAY: 250ms
+  AIR_SEND_INTERRUPT: true
+  AIR_FLAGS:
+    - -tmp_dir={{.AIR_TMPDIR | quote}}
+    - -build.args_bin={{.AIR_ARGS | join " " | quote}}
+    - -build.bin={{.AIR_BIN | quote}}
+    - -build.cmd={{.AIR_CMD | quote}}
+    - -build.exclude_dir={{.AIR_EXCLUDE_DIR | join "," | quote}}
+    - -build.exclude_regex={{.AIR_EXCLUDE_REGEX | join "," | quote}}
+    - -build.include_ext={{.AIR_INCLUDE_EXT | join "," | quote}}
+    - -build.kill_delay={{.AIR_KILL_DELAY | quote}}
+    - -build.send_interrupt={{.AIR_SEND_INTERRUPT | quote}}
+
+tasks:
+  clean:
+    desc: Clean Go build artifacts
+    aliases: [c]
+    cmd: rm -rf {{.BIN_DIR}}/{{.PROJECT}}
+
+  restore:
+    desc: Restore Go dependencies
+    aliases: [r]
+    status:
+      - test -z "$(go mod download -x)"
+    cmds:
+      - go mod download
+      - go mod verify
+
+  generate:
+    desc: Generate Go sources
+    aliases: [g]
+    deps: [restore]
+    vars:
+      FLAGS: { ref: .GO_FLAGS | join " " }
+    cmd: go generate {{.FLAGS}} {{.GO_PKG}}
+
+  build:
+    desc: Build Go app
+    aliases: [b]
+    deps: [generate]
+    sources: [./**/*.go]
+    generates: ["{{.BIN_DIR}}/{{.PROJECT}}"]
+    vars:
+      EXTRA_FLAGS:
+        - -o {{.BIN_DIR}}
+      FLAGS:
+        ref: concat .GO_FLAGS .GO_BUILDFLAGS .EXTRA_FLAGS | join " "
+    cmds:
+      - cmd: mkdir -p {{.BIN_DIR}}
+        silent: true
+      - go build {{.FLAGS}} {{.GO_PKG}}
+
+  watch:
+    desc: Watch Go app with Air
+    aliases: [w]
+    vars:
+      FLAGS: { ref: .AIR_FLAGS | join " " }
+    cmd: go tool air {{.FLAGS}}
+
+  test:
+    desc: Run Go unit tests
+    aliases: [t]
+    vars:
+      TEST_FLAGS: { ref: .GO_TESTFLAGS | join " " }
+      FLAGS: { ref: concat .GO_FLAGS .GO_BUILD_FLAGS | join " " }
+    cmd: go test {{.FLAGS}} {{.GO_TESTS}} {{.TEST_FLAGS}}
