@@ -1,0 +1,102 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+  NPM_WORKSPACE: "@bdreece/{{.PROJECT}}-web"
+  NPM_OFFLINE: true
+
+  NPM_INSTALLFLAGS:
+    - --workspaces
+    - --include-workspace-root
+
+  NPM_EXECFLAGS:
+    - --offline {{.NPM_OFFLINE}}
+    - --workspace {{.NPM_WORKSPACE}}
+
+  VITE_LOG_LEVEL: { ref: .VERBOSE | ternary "debug" "info" }
+  VITE_MODE: { ref: .ENVIRONMENT }
+  VITE_FLAGS:
+    - --logLevel {{.VITE_LOG_LEVEL}}
+    - --mode {{.VITE_MODE}}
+
+  VITE_PORT: 5173
+  VITE_MANIFEST: true
+  VITE_EMPTY_OUT_DIR: true
+  VITE_SOURCEMAP: { ref: .ENVIRONMENT | eq "production" }
+  VITE_MINIFY: { ref: .ENVIRONMENT | eq "production" }
+  VITE_OUT_DIR: { ref: .OUT_DIR }
+
+  VITE_BUILDFLAGS:
+    - --emptyOutDir {{.VITE_EMPTY_OUT_DIR}}
+    - --minify {{.VITE_MINIFY}}
+    - --manifest {{.VITE_MANIFEST}}
+    - --outDir {{.VITE_OUT_DIR}}
+    - --sourcemap {{.VITE_SOURCEMAP}}
+
+env:
+  NODE_ENV:
+    ref: .MODE | eq "release" | ternary "production" "development"
+
+tasks:
+  clean:
+    desc: Remove Vite build artifacts
+    aliases: [c]
+    cmd:
+      cmd: rm -rf {{printf "%s/%s" .ROOT_DIR .ITEM}}
+      for:
+        - _obj/.vite
+        - _obj/tsconfig.app.tsbuildinfo
+        - _obj/tsconfig.node.tsbuildinfo
+
+  restore:
+    desc: Restore Vite dependencies
+    aliases: [r]
+    sources:
+      - "{{.ROOT_DIR}}/package.json"
+      - "{{.ROOT_DIR}}/package-lock.json"
+      - "{{.ROOT_DIR}}/web/package.json"
+    generates:
+      - "{{.ROOT_DIR}}/node_modules/.package-lock.json"
+    vars:
+      FLAGS: { ref: .NPM_INSTALLFLAGS | join " " }
+    cmd: npm install {{.FLAGS}}
+
+  build:
+    desc: Build Vue application
+    deps: [restore]
+    aliases: [b]
+    sources:
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.js"
+      - "**/*.jsx"
+      - "**/*.vue"
+      - "**/*.json"
+    generates:
+      - "{{.VITE_OUT_DIR}}/index.html"
+    vars:
+      FLAGS: { ref: .NPM_EXECFLAGS | join " " }
+      BUILD_FLAGS:
+        ref: .VITE_FLAGS | concat .VITE_BUILDFLAGS | join " "
+    cmds:
+      - npm exec {{.FLAGS}} -- vite build {{.BUILD_FLAGS}}
+
+  watch:
+    desc: Launch Vite dev server
+    aliases: [w]
+    deps: [restore]
+    vars:
+      FLAGS: { ref: .NPM_EXECFLAGS | join " " }
+      WATCH_FLAGS: { ref: .VITE_FLAGS | join " " }
+    cmd: npm exec {{.FLAGS}} -- vite {{.WATCH_FLAGS}}
+
+  test:
+    desc: Run Vitest testing suite
+    aliases: [t]
+    deps: [restore]
+    vars:
+      FLAGS: { ref: .NPM_EXECFLAGS | join " " }
+      TEST_FLAGS: "--mode {{.VITE_MODE}}"
+    cmd: npm exec {{.FLAGS}} -- vitest run {{.TEST_FLAGS}}

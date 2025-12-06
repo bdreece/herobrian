@@ -24,6 +24,7 @@ dotenv: [.env, ".env.{{.ENVIRONMENT}}"]
 
 includes:
   go: ./Go.yml
+  vite: ./Vite.yml
 
 tasks:
   default:
@@ -32,24 +33,24 @@ tasks:
   clean:
     desc: Clean all build artifacts
     aliases: [c]
-    deps: [go:clean]
+    deps: [go:clean, vite:clean]
 
   restore:
     desc: Restore all dependencies
     aliases: [r]
-    deps: [go:restore]
+    deps: [go:restore, vite:restore]
 
   build:
     desc: Build application
     aliases: [b]
-    deps: [go:build]
+    deps: [go:build, vite:build]
 
   watch:
     desc: Launch application with live reload
     aliases: [w]
-    deps: [go:watch]
+    deps: [go:watch, vite:watch]
 
   test:
     desc: Run test suites
     aliases: [t]
-    deps: [go:test]
+    deps: [go:test, vite:test]
