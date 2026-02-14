@@ -1,0 +1,22 @@
+# https://lefthook.dev/configuration/
+pre-commit:
+    parallel: true
+    jobs:
+        - group:
+              jobs:
+                  - run: go tool golangci-lint run ./...
+                  - run: go tool golangci-lint fmt ./...
+        - group:
+              jobs:
+                  - run: pnpm exec eslint --fix .
+                    glob:
+                        - '*.ts'
+                        - '*.vue'
+                  - run: pnpm exec prettier --check --write .
+                    glob:
+                        - '*.html'
+                        - '*.ts'
+                        - '*.vue'
+                        - '*.json'
+                        - '*.yml'
+                        - '*.yaml'

@@ -1,0 +1,45 @@
+{
+    "name": "@herobrian/web",
+    "type": "module",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc -b && vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@unhead/vue": "catalog:frontend",
+        "@vueuse/core": "catalog:frontend",
+        "axios": "catalog:frontend",
+        "dayjs": "catalog:frontend",
+        "nprogress": "catalog:frontend",
+        "vue": "catalog:frontend",
+        "vue-router": "catalog:frontend",
+        "zod": "catalog:frontend"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "catalog:build",
+        "@tsconfig/node-ts": "catalog:dev",
+        "@tsconfig/node24": "catalog:dev",
+        "@tsconfig/strictest": "catalog:dev",
+        "@types/node": "catalog:types",
+        "@types/nprogress": "catalog:types",
+        "@vitejs/plugin-vue": "catalog:build",
+        "@vue-macros/volar": "catalog:dev",
+        "@vue/test-utils": "catalog:dev",
+        "@vue/tsconfig": "catalog:dev",
+        "daisyui": "catalog:dev",
+        "tailwindcss": "catalog:build",
+        "type-fest": "catalog:types",
+        "typescript": "catalog:dev",
+        "unplugin-auto-import": "catalog:build",
+        "unplugin-vue-components": "catalog:build",
+        "unplugin-vue-macros": "catalog:build",
+        "unplugin-vue-router": "catalog:build",
+        "vite": "catalog:build",
+        "vite-bundle-analyzer": "catalog:dev",
+        "vite-plugin-vue-layouts-next": "catalog:build",
+        "vue-tsc": "catalog:dev"
+    }
+}

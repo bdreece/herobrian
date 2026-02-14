@@ -1,0 +1,24 @@
+{
+    "extends": [
+        "@vue/tsconfig/tsconfig.dom.json",
+        "@tsconfig/strictest/tsconfig.json"
+    ],
+    "compilerOptions": {
+        "tsBuildInfoFile": "../_obj/tsconfig.app.tsbuildinfo",
+        "moduleDetection": "auto",
+
+        "types": [
+            "unplugin-vue-router/client",
+            "vite/client",
+            "vite-plugin-vue-layouts-next/client"
+        ],
+        /* Linting */
+        "strict": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "erasableSyntaxOnly": true,
+        "noUncheckedSideEffectImports": true
+    },
+    "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+}

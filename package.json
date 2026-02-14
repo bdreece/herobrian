@@ -1,0 +1,27 @@
+{
+    "name": "herobrian",
+    "type": "module",
+    "license": "GPL-3.0-only",
+    "engineStrict": true,
+    "engines": {
+        "node": "^24.12.0",
+        "pnpm": "^10.28.2"
+    },
+    "version": "2.0.0-alpha.1",
+    "private": true,
+    "author": {
+        "name": "Brian Reece",
+        "email": "me@bdreece.dev"
+    },
+    "devDependencies": {
+        "@antfu/eslint-config": "catalog:dev",
+        "@tsconfig/node-ts": "catalog:dev",
+        "@tsconfig/node24": "catalog:dev",
+        "@tsconfig/strictest": "catalog:dev",
+        "@types/eslint-config-prettier": "catalog:types",
+        "@types/node": "catalog:types",
+        "eslint": "catalog:dev",
+        "eslint-config-prettier": "catalog:dev",
+        "prettier": "catalog:dev"
+    }
+}
