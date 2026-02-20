@@ -20,8 +20,10 @@
         "@tsconfig/strictest": "catalog:dev",
         "@types/eslint-config-prettier": "catalog:types",
         "@types/node": "catalog:types",
+        "ajv": "catalog:dev",
         "eslint": "catalog:dev",
         "eslint-config-prettier": "catalog:dev",
-        "prettier": "catalog:dev"
+        "prettier": "catalog:dev",
+        "minimatch": "catalog:dev"
     }
 }
