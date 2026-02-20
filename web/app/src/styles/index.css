@@ -1,1 +1,28 @@
-@include 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Ropa+Sans:ital@0;1&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import 'tailwindcss';
+
+@plugin 'daisyui' {
+    themes:
+        autumn --default,
+        coffee --prefersdark;
+}
+
+@plugin '@iconify/tailwind4' {
+    prefixes: solar;
+}
+
+@theme {
+    --font-sans:
+        'Noto Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-heading:
+        'Rubik', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-subheading:
+        'Ropa Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+#app {
+    @apply flex flex-col min-h-screen max-w-screen;
+}

@@ -13,7 +13,7 @@ const router = createRouter({
     routes: setupLayouts(routes),
 });
 
-app.use(router).use(router);
+app.use(head).use(router);
 
 const modules = import.meta.glob<Herobrian.Module>('./modules/*.ts', {
     eager: true,

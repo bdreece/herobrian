@@ -1,0 +1,49 @@
+<script setup lang="ts">
+    import type { NavItem } from '../types/nav';
+
+    defineProps<{
+        items: NavItem[];
+    }>();
+</script>
+
+<template>
+    <header class="navbar bg-base-300 w-full">
+        <div class="flex-none lg:hidden">
+            <label
+                for="drawer-toggle"
+                aria-label="open sidebar"
+                class="btn btn-square btn-ghost"
+            >
+                <i class="iconify solar--hamburger-menu-line-duotone" />
+            </label>
+        </div>
+        <RouterLink
+            to="/"
+            class="btn btn-ghost items-center text-xl"
+        >
+            <i class="iconify solar--bonfire-line-duotone" />
+            <span class="font-heading font-bold">herobrian</span>
+        </RouterLink>
+        <div class="flex-1" />
+        <nav class="hidden flex-none lg:block">
+            <ul class="menu menu-horizontal">
+                <li
+                    v-for="item of items"
+                    :key="item.id"
+                >
+                    <RouterLink
+                        :to="item.href"
+                        class="flex gap-1"
+                    >
+                        <i
+                            v-if="item.icon"
+                            class="iconify"
+                            :class="item.icon"
+                        />
+                        <span v-text="item.text" />
+                    </RouterLink>
+                </li>
+            </ul>
+        </nav>
+    </header>
+</template>

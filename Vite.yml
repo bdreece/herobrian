@@ -4,16 +4,9 @@
 version: '3'
 
 vars:
-    NPM_WORKSPACE: '@bdreece/{{.PROJECT}}-web'
-    NPM_OFFLINE: true
-
-    NPM_INSTALLFLAGS:
-        - --workspaces
-        - --include-workspace-root
-
-    NPM_EXECFLAGS:
-        - --offline {{.NPM_OFFLINE}}
-        - --workspace {{.NPM_WORKSPACE}}
+    PNPM_DIR: web/app
+    PNPM_EXECFLAGS:
+        - -C {{.PNPM_DIR}}
 
     VITE_LOG_LEVEL: { ref: .VERBOSE | ternary "debug" "info" }
     VITE_MODE: { ref: .ENVIRONMENT }
@@ -59,9 +52,7 @@ tasks:
             - '{{.ROOT_DIR}}/web/package.json'
         generates:
             - '{{.ROOT_DIR}}/node_modules/.package-lock.json'
-        vars:
-            FLAGS: { ref: .NPM_INSTALLFLAGS | join " " }
-        cmd: npm install {{.FLAGS}}
+        cmd: pnpm install
 
     build:
         desc: Build Vue application
@@ -77,26 +68,26 @@ tasks:
         generates:
             - '{{.VITE_OUT_DIR}}/index.html'
         vars:
-            FLAGS: { ref: .NPM_EXECFLAGS | join " " }
+            FLAGS: { ref: .PNPM_EXECFLAGS | join " " }
             BUILD_FLAGS:
                 ref: .VITE_FLAGS | concat .VITE_BUILDFLAGS | join " "
         cmds:
-            - npm exec {{.FLAGS}} -- vite build {{.BUILD_FLAGS}}
+            - pnpm {{.FLAGS}} exec vite build {{.BUILD_FLAGS}}
 
     watch:
         desc: Launch Vite dev server
         aliases: [w]
         deps: [restore]
         vars:
-            FLAGS: { ref: .NPM_EXECFLAGS | join " " }
+            FLAGS: { ref: .PNPM_EXECFLAGS | join " " }
             WATCH_FLAGS: { ref: .VITE_FLAGS | join " " }
-        cmd: npm exec {{.FLAGS}} -- vite {{.WATCH_FLAGS}}
+        cmd: pnpm {{.FLAGS}} exec vite {{.WATCH_FLAGS}}
 
     test:
         desc: Run Vitest testing suite
         aliases: [t]
         deps: [restore]
         vars:
-            FLAGS: { ref: .NPM_EXECFLAGS | join " " }
+            FLAGS: { ref: .PNPM_EXECFLAGS | join " " }
             TEST_FLAGS: '--mode {{.VITE_MODE}}'
-        cmd: npm exec {{.FLAGS}} -- vitest run {{.TEST_FLAGS}}
+        cmd: pnpm {{.FLAGS}} exec vitest run {{.TEST_FLAGS}}

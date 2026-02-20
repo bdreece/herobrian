@@ -1,6 +1,9 @@
 <script setup lang="ts">
     definePage({
-        meta: {},
+        meta: {
+            allowAnonymous: true,
+            layout: 'auth',
+        },
     });
 </script>
 

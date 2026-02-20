@@ -56,15 +56,13 @@ var cmd = cobra.Command{
 func init() {
 	cmd.Flags().StringP("config", "c", "/etc/herobrian/config.yml", "path to config file")
 	cmd.Flags().StringP("environment", "e", "development", "environment name")
-	cmd.Flags().IntP("log.level.default", "l", int(slog.LevelInfo), "default log level")
+	cmd.Flags().IntP("log-level", "l", int(slog.LevelInfo), "default log level")
 	cmd.Flags().IntP("port", "p", 8080, "http listener port")
 
 	viper.SetDefault("log.level.stdlib", int(slog.LevelDebug))
 	viper.SetDefault("log.level.http", int(slog.LevelWarn))
-}
 
-func ExecuteContext(ctx context.Context) error {
-	return cmd.ExecuteContext(ctx)
+	viper.RegisterAlias("log.level.default", "log-level")
 }
 
 func setup(cmd *cobra.Command, _ []string) error {

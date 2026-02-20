@@ -13,12 +13,15 @@
         "@vueuse/core": "catalog:frontend",
         "axios": "catalog:frontend",
         "dayjs": "catalog:frontend",
+        "jwt-decode": "catalog:frontend",
         "nprogress": "catalog:frontend",
         "vue": "catalog:frontend",
         "vue-router": "catalog:frontend",
         "zod": "catalog:frontend"
     },
     "devDependencies": {
+        "@iconify-json/solar": "catalog:build",
+        "@iconify/tailwind4": "catalog:build",
         "@tailwindcss/vite": "catalog:build",
         "@tsconfig/node-ts": "catalog:dev",
         "@tsconfig/node24": "catalog:dev",
@@ -35,11 +38,11 @@
         "typescript": "catalog:dev",
         "unplugin-auto-import": "catalog:build",
         "unplugin-vue-components": "catalog:build",
-        "unplugin-vue-macros": "catalog:build",
         "unplugin-vue-router": "catalog:build",
         "vite": "catalog:build",
         "vite-bundle-analyzer": "catalog:dev",
         "vite-plugin-vue-layouts-next": "catalog:build",
+        "vue-macros": "catalog:build",
         "vue-tsc": "catalog:dev"
     }
 }
