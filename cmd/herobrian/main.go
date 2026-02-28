@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"os"
 	"os/signal"
@@ -16,16 +16,21 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/httplog/v3"
-	"github.com/go-chi/jwtauth/v5"
-	"github.com/lestrrat-go/jwx/v2/jwa"
-	"github.com/lestrrat-go/jwx/v2/jwt"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/bdreece/herobrian/internal/database"
+	"github.com/bdreece/herobrian/internal/identity"
+	"github.com/bdreece/herobrian/pkg/minecraft"
+	"github.com/go-crypt/crypt"
+	"github.com/go-crypt/crypt/algorithm/argon2"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"go.etcd.io/etcd/pkg/v3/cobrautl"
+	echovalidator "gopkg.in/bdreece/echo-validator.v1"
+	_ "modernc.org/sqlite"
 )
 
 var (
@@ -59,6 +64,13 @@ func init() {
 	cmd.Flags().IntP("log-level", "l", int(slog.LevelInfo), "default log level")
 	cmd.Flags().IntP("port", "p", 8080, "http listener port")
 
+	viper.SetOptions(
+		viper.KeyDelimiter(":"),
+		viper.EnvKeyReplacer(strings.NewReplacer("__", ":")),
+	)
+
+	viper.SetDefault("app.root_dir", "/usr/share/herobrian/www")
+	viper.SetDefault("app.proxy_url", "http://localhost:5173")
 	viper.SetDefault("log.level.stdlib", int(slog.LevelDebug))
 	viper.SetDefault("log.level.http", int(slog.LevelWarn))
 
@@ -74,11 +86,10 @@ func setup(cmd *cobra.Command, _ []string) error {
 		viper.AddConfigPath(".")
 	}
 
-	viper.SetEnvKeyReplacer(strings.NewReplacer("__", "."))
 	viper.SetEnvPrefix("herobrian")
 	viper.AutomaticEnv()
 
-	if err := viper.ReadInConfig(); err != nil {
+	if err := viper.ReadInConfig(); err != nil && !errors.As(err, new(viper.ConfigFileNotFoundError)) {
 		return err
 	}
 
@@ -103,36 +114,101 @@ func setup(cmd *cobra.Command, _ []string) error {
 }
 
 func run(cmd *cobra.Command, _ []string) error {
-	router := chi.NewRouter()
-	router.Use(
-		middleware.Recoverer,
-		httplog.RequestLogger(slog.Default(), &httplog.Options{
-			Level: slog.Level(viper.GetInt("log.level.http")),
-		}),
-	)
-
-	secret := []byte(viper.GetString("jwt.secret"))
-	auth := jwtauth.New(jwa.HS256.String(), secret, secret,
-		jwt.WithAudience(viper.GetString("jwt.audience")),
-		jwt.WithIssuer(viper.GetString("jwt.issuer")),
-	)
-
-	router.Use(jwtauth.Verifier(auth))
-
-	var fileServer http.Handler
-	if viper.GetString("environment") == "production" {
-		fileServer = http.FileServer(http.Dir(viper.GetString("http.dir")))
-	} else {
-		url, _ := url.Parse("http://localhost:5173")
-		fileServer = httputil.NewSingleHostReverseProxy(url)
+	db, err := sql.Open("sqlite", viper.GetString("sqlite.dsn"))
+	if err != nil {
+		return err
 	}
 
-	router.Mount("/", fileServer)
+	defer db.Close()
+
+	queries := database.New(db)
+	if _, err := queries.ApplySchema(cmd.Context()); err != nil {
+		return err
+	}
+
+	slog.Debug("opened sqlite connection")
+
+	awsConfig, err := config.LoadDefaultConfig(cmd.Context())
+	if err != nil {
+		return err
+	}
+
+	slog.Debug("loaded AWS config")
+
+	ec2 := ec2.NewFromConfig(awsConfig)
+	slog.Debug("configured EC2 client")
+
+	accessTokenSigner, err := identity.NewTokenSigner(identity.AccessToken)
+	if err != nil {
+		return err
+	}
+
+	inviteTokenSigner, err := identity.NewTokenSigner(identity.InviteToken)
+	if err != nil {
+		return err
+	}
+
+	slog.Debug("created token signers")
+
+	decoder := crypt.NewDecoder()
+	if err = argon2.RegisterDecoderArgon2id(decoder); err != nil {
+		return err
+	}
+
+	hasher, err := argon2.New(
+		argon2.WithProfileRFC9106LowMemory(),
+	)
+	if err != nil {
+		return err
+	}
+
+	slog.Debug("created password hasher + decoder")
+
+	hostConfigs := map[string]minecraft.HostConfig{}
+	if err := viper.UnmarshalKey("hosts", &hostConfigs); err != nil {
+		return err
+	}
+
+	provider := minecraft.EC2Provider{
+		Client: ec2,
+	}
+
+	e := echo.New()
+	e.Validator = echovalidator.Default
+
+	e.POST("/login", identity.NewLoginHandler(queries, accessTokenSigner, decoder))
+	e.POST("/identity/activate", identity.NewActivateHandler())
+
+	hosts := e.Group("/api/host")
+	hosts.GET("/", minecraft.NewHostHandler(&provider, hostConfigs))
+
+	e.Use(
+		middleware.Recover(),
+	)
+
+	env := viper.GetString("environment")
+	var appServer echo.MiddlewareFunc
+	if env == "production" {
+		appServer = middleware.StaticWithConfig(middleware.StaticConfig{
+			Root:  viper.GetString("app.root_dir"),
+			HTML5: true,
+		})
+	} else {
+		url, _ := url.Parse(viper.GetString("app.proxy_url"))
+		balancer := middleware.NewRoundRobinBalancer([]*middleware.ProxyTarget{
+			{URL: url},
+		})
+
+		appServer = middleware.ProxyWithConfig(middleware.ProxyConfig{
+			Balancer: balancer,
+		})
+	}
+
+	e.Use(appServer)
 
 	addr := net.JoinHostPort("", fmt.Sprint(viper.GetInt("port")))
 	srv := http.Server{
-		Addr:    addr,
-		Handler: router,
+		Addr: addr,
 	}
 
 	go listen(&srv)

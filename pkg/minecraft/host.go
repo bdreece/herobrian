@@ -3,6 +3,9 @@ package minecraft
 import (
 	"context"
 	"errors"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
 )
 
 var ErrHostNotFound = errors.New("minecraft: host not found")
@@ -36,4 +39,23 @@ type HostProvider interface {
 	StartHosts(ctx context.Context, ids ...string) error
 	StopHosts(ctx context.Context, ids ...string) error
 	RestartHosts(ctx context.Context, ids ...string) error
+}
+
+func NewHostHandler(provider HostProvider, hosts map[string]HostConfig) echo.HandlerFunc {
+	ids := make([]string, len(hosts))
+	i := 0
+	for _, cfg := range hosts {
+		ids[i] = cfg.ID
+		i += 1
+	}
+
+	return func(c echo.Context) error {
+		ctx := c.Request().Context()
+		hosts, err := provider.Hosts(ctx, ids...)
+		if err != nil {
+			return echo.ErrBadGateway.WithInternal(err)
+		}
+
+		return c.JSON(http.StatusOK, hosts)
+	}
 }

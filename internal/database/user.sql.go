@@ -9,6 +9,34 @@ import (
 	"context"
 )
 
+const findUserByDisplayName = `-- name: FindUserByDisplayName :one
+SELECT u.id, u.created_at, u.updated_at, u.first_name, u.last_name, u.display_name, u.password_hash, u.picture_url, u.totp_secret
+FROM users AS u
+WHERE u.display_name = ?1
+LIMIT 1
+`
+
+type FindUserByDisplayNameParams struct {
+	DisplayName string `json:"displayName"`
+}
+
+func (q *Queries) FindUserByDisplayName(ctx context.Context, arg FindUserByDisplayNameParams) (*User, error) {
+	row := q.db.QueryRowContext(ctx, findUserByDisplayName, arg.DisplayName)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.FirstName,
+		&i.LastName,
+		&i.DisplayName,
+		&i.PasswordHash,
+		&i.PictureURL,
+		&i.TOTPSecret,
+	)
+	return &i, err
+}
+
 const findUserByID = `-- name: FindUserByID :one
 SELECT u.id, u.created_at, u.updated_at, u.first_name, u.last_name, u.display_name, u.password_hash, u.picture_url, u.totp_secret
 FROM users AS u
@@ -20,8 +48,8 @@ type FindUserByIDParams struct {
 	ID int64 `json:"id"`
 }
 
-func (q *Queries) FindUserByID(ctx context.Context, db DBTX, arg FindUserByIDParams) (*User, error) {
-	row := db.QueryRowContext(ctx, findUserByID, arg.ID)
+func (q *Queries) FindUserByID(ctx context.Context, arg FindUserByIDParams) (*User, error) {
+	row := q.db.QueryRowContext(ctx, findUserByID, arg.ID)
 	var i User
 	err := row.Scan(
 		&i.ID,

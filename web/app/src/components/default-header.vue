@@ -8,7 +8,10 @@
 
 <template>
     <header class="navbar bg-base-300 w-full">
-        <div class="flex-none lg:hidden">
+        <div
+            v-if="items.length"
+            class="flex-none lg:hidden"
+        >
             <label
                 for="drawer-toggle"
                 aria-label="open sidebar"

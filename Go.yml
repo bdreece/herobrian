@@ -59,6 +59,7 @@ vars:
         - _string.go
     AIR_INCLUDE_EXT:
         - go
+        - sql
         - tmpl
     AIR_KILL_DELAY: 250ms
     AIR_SEND_INTERRUPT: true
