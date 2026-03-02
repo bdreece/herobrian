@@ -1,8 +1,8 @@
 package minecraft
 
 type HostConfig struct {
-	ID        string `mapstructure:"id"`
-	Instances map[string]InstanceConfig
+	ID        string                    `mapstructure:"id"`
+	Instances map[string]InstanceConfig `mapstructure:"instances"`
 }
 
 type InstanceConfig struct {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
     definePage({
+        name: 'recovery',
         meta: {
             allowAnonymous: true,
             layout: 'auth',

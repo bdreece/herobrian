@@ -3,10 +3,14 @@ import { jwtDecode, type JwtPayload } from 'jwt-decode';
 
 export interface JwtClaims extends Required<JwtPayload> {}
 
-export const useAuth = createGlobalState(() => {
-    const token = useLocalStorage<string>('access_token', null, {
+export const useToken = createGlobalState(() =>
+    useLocalStorage<string>('access_token', null, {
         writeDefaults: false,
-    });
+    }),
+);
+
+export function useAuth() {
+    const token = useToken();
 
     const authenticated = computed(() => !!token.value);
 
@@ -18,4 +22,4 @@ export const useAuth = createGlobalState(() => {
         { authenticated, claims, token } as const,
         [authenticated, claims, token] as const,
     );
-});
+}

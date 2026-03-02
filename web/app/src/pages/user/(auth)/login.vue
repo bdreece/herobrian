@@ -1,5 +1,6 @@
 <script setup lang="ts">
     definePage({
+        name: 'login',
         meta: {
             allowAnonymous: true,
             layout: 'auth',
@@ -7,9 +8,33 @@
     });
 
     const formId = useId();
+    const router = useRouter();
+    const token = useToken();
+    const { error, execute } = useAxios<{ accessToken: string }>(
+        '/api/user/login',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+        },
+        {
+            immediate: false,
+            onSuccess({ accessToken }) {
+                token.value = accessToken;
+                router.push({ name: 'home' });
+            },
+        },
+    );
 
     function onSubmit(e: SubmitEvent) {
         e.preventDefault();
+        const form = e.target as HTMLFormElement;
+        const data = new FormData(form);
+        /* @ts-expect-error 2345 */
+        const params = new URLSearchParams(data);
+
+        execute({ data: params });
     }
 </script>
 
@@ -41,6 +66,10 @@
                         required
                     />
                 </form>
+
+                <div v-if="error">
+                    {{ error }}
+                </div>
 
                 <div class="card-actions justify-between">
                     <label class="label">

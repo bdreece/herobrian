@@ -37,7 +37,7 @@ const (
 
 func NewTokenSigner(kind TokenKind) (*TokenSigner, error) {
 	var options TokenOptions
-	if err := viper.Sub("jwt").UnmarshalKey(string(kind), &options); err != nil {
+	if err := viper.UnmarshalKey("jwt:"+string(kind), &options); err != nil {
 		return nil, err
 	}
 

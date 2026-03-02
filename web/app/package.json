@@ -11,6 +11,7 @@
     "dependencies": {
         "@unhead/vue": "catalog:frontend",
         "@vueuse/core": "catalog:frontend",
+        "@vueuse/integrations": "catalog:frontend",
         "axios": "catalog:frontend",
         "dayjs": "catalog:frontend",
         "jwt-decode": "catalog:frontend",

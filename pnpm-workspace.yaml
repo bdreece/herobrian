@@ -38,6 +38,7 @@ catalogs:
     frontend:
         '@unhead/vue': ^2.1.2
         '@vueuse/core': ^14.1.0
+        '@vueuse/integrations': ^14.2.1
         axios: ^1.13.5
         dayjs: ^1.11.19
         jwt-decode: ^4.0.0

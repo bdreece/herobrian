@@ -1,6 +1,9 @@
 <script setup lang="ts">
     definePage({
-        meta: {},
+        name: 'home',
+        meta: {
+            breadcrumb: 'Home',
+        },
     });
 </script>
 

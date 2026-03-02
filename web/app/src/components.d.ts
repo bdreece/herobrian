@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    BreadcrumbList: typeof import('./components/breadcrumb-list.vue')['default']
     DefaultHeader: typeof import('./components/default-header.vue')['default']
     DefaultNavbar: typeof import('./components/default-navbar.vue')['default']
     DefaultSidebar: typeof import('./components/default-sidebar.vue')['default']

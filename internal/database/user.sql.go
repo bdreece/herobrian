@@ -64,3 +64,55 @@ func (q *Queries) FindUserByID(ctx context.Context, arg FindUserByIDParams) (*Us
 	)
 	return &i, err
 }
+
+const upsertUser = `-- name: UpsertUser :execrows
+INSERT INTO users
+(
+	first_name,
+	last_name,
+	display_name,
+	password_hash,
+	picture_url,
+	totp_secret
+)
+VALUES
+(
+	?1,
+	?2,
+	?3,
+	?4,
+	?5,
+	?6
+) ON CONFLICT (display_name) DO UPDATE 
+  SET updated_at = DATETIME('now'),
+      first_name = ?1,
+      last_name = ?2,
+      password_hash = ?4,
+      picture_url = ?5,
+      totp_secret = ?6
+WHERE display_name = ?3
+`
+
+type UpsertUserParams struct {
+	FirstName    string  `json:"firstName"`
+	LastName     string  `json:"lastName"`
+	DisplayName  string  `json:"displayName"`
+	PasswordHash string  `json:"passwordHash"`
+	PictureURL   *string `json:"pictureUrl"`
+	TOTPSecret   *string `json:"totpSecret"`
+}
+
+func (q *Queries) UpsertUser(ctx context.Context, arg UpsertUserParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, upsertUser,
+		arg.FirstName,
+		arg.LastName,
+		arg.DisplayName,
+		arg.PasswordHash,
+		arg.PictureURL,
+		arg.TOTPSecret,
+	)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}

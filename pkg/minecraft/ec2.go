@@ -10,13 +10,17 @@ import (
 )
 
 type EC2Provider struct {
-	Client *ec2.Client
+	client *ec2.Client
+}
+
+func NewEC2Provider(client *ec2.Client) *EC2Provider {
+	return &EC2Provider{client}
 }
 
 var _ HostProvider = (*EC2Provider)(nil)
 
 func (provider *EC2Provider) Hosts(ctx context.Context, ids ...string) ([]*HostInfo, error) {
-	instanceOutput, err := provider.Client.DescribeInstances(ctx, &ec2.DescribeInstancesInput{
+	instanceOutput, err := provider.client.DescribeInstances(ctx, &ec2.DescribeInstancesInput{
 		InstanceIds: ids,
 	})
 
@@ -24,7 +28,7 @@ func (provider *EC2Provider) Hosts(ctx context.Context, ids ...string) ([]*HostI
 		return nil, err
 	}
 
-	hostsByType := make(map[types.InstanceType][]*HostInfo)
+	hostsByType := map[types.InstanceType][]*HostInfo{}
 	for _, r := range instanceOutput.Reservations {
 		for _, i := range r.Instances {
 			info := HostInfo{
@@ -43,7 +47,7 @@ func (provider *EC2Provider) Hosts(ctx context.Context, ids ...string) ([]*HostI
 		}
 	}
 
-	typeOutput, err := provider.Client.DescribeInstanceTypes(ctx, &ec2.DescribeInstanceTypesInput{
+	typeOutput, err := provider.client.DescribeInstanceTypes(ctx, &ec2.DescribeInstanceTypesInput{
 		InstanceTypes: slices.Collect(maps.Keys(hostsByType)),
 	})
 
@@ -57,7 +61,6 @@ func (provider *EC2Provider) Hosts(ctx context.Context, ids ...string) ([]*HostI
 				Type:    string(typeInfo.InstanceType),
 				Memory:  typeInfo.MemoryInfo.SizeInMiB,
 				Network: *typeInfo.NetworkInfo.NetworkPerformance,
-				Storage: typeInfo.InstanceStorageInfo.TotalSizeInGB,
 			}
 
 			for _, host := range hostsByType[typeInfo.InstanceType] {
@@ -74,7 +77,7 @@ func (provider *EC2Provider) Hosts(ctx context.Context, ids ...string) ([]*HostI
 }
 
 func (provider *EC2Provider) StartHosts(ctx context.Context, ids ...string) error {
-	_, err := provider.Client.StartInstances(ctx, &ec2.StartInstancesInput{
+	_, err := provider.client.StartInstances(ctx, &ec2.StartInstancesInput{
 		InstanceIds: ids,
 	})
 
@@ -82,7 +85,7 @@ func (provider *EC2Provider) StartHosts(ctx context.Context, ids ...string) erro
 }
 
 func (provider *EC2Provider) StopHosts(ctx context.Context, ids ...string) error {
-	_, err := provider.Client.StopInstances(ctx, &ec2.StopInstancesInput{
+	_, err := provider.client.StopInstances(ctx, &ec2.StopInstancesInput{
 		InstanceIds: ids,
 	})
 
@@ -90,7 +93,7 @@ func (provider *EC2Provider) StopHosts(ctx context.Context, ids ...string) error
 }
 
 func (provider *EC2Provider) RestartHosts(ctx context.Context, ids ...string) error {
-	_, err := provider.Client.RebootInstances(ctx, &ec2.RebootInstancesInput{
+	_, err := provider.client.RebootInstances(ctx, &ec2.RebootInstancesInput{
 		InstanceIds: ids,
 	})
 
