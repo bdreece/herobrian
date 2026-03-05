@@ -3,6 +3,9 @@
         name: 'host-layout',
         meta: {
             breadcrumb: 'Hosts',
+            seo: {
+                title: 'herobrian - Hosts',
+            },
         },
     });
 

@@ -42,6 +42,9 @@ export default defineConfig({
                 {
                     'vue-router/auto': ['useLink'],
                 },
+                {
+                    '@tanstack/vue-query': ['useQuery', 'useMutation'],
+                },
             ],
             dirs: ['src/composables'],
             dts: 'src/auto-imports.d.ts',

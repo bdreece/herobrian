@@ -1,10 +1,6 @@
 <script setup lang="ts">
     definePage({
-        name: 'profile',
+        name: 'host-metrics',
         meta: {},
     });
 </script>
-
-<template>
-    <div></div>
-</template>

@@ -4,28 +4,21 @@
         meta: {
             allowAnonymous: true,
             layout: 'auth',
+            seo: {
+                title: 'herobrian - Login',
+            },
         },
     });
 
     const formId = useId();
     const router = useRouter();
     const token = useToken();
-    const { error, execute } = useAxios<{ accessToken: string }>(
-        '/api/user/login',
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
+    const { mutate, error } = useLogin({
+        onSuccess({ accessToken }) {
+            token.value = accessToken;
+            router.push({ name: 'home' });
         },
-        {
-            immediate: false,
-            onSuccess({ accessToken }) {
-                token.value = accessToken;
-                router.push({ name: 'home' });
-            },
-        },
-    );
+    });
 
     function onSubmit(e: SubmitEvent) {
         e.preventDefault();
@@ -34,7 +27,7 @@
         /* @ts-expect-error 2345 */
         const params = new URLSearchParams(data);
 
-        execute({ data: params });
+        mutate(params);
     }
 </script>
 
@@ -68,7 +61,7 @@
                 </form>
 
                 <div v-if="error">
-                    {{ error }}
+                    {{ error.message }}
                 </div>
 
                 <div class="card-actions justify-between">

@@ -20,7 +20,7 @@
                 :key="item.id"
             >
                 <RouterLink
-                    :to="item.href"
+                    :to="item.to"
                     class="flex gap-1"
                 >
                     <i

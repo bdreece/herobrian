@@ -3,6 +3,9 @@
         name: 'home',
         meta: {
             breadcrumb: 'Home',
+            seo: {
+                title: 'herobrian',
+            },
         },
     });
 </script>

@@ -15,6 +15,7 @@
             class="list-row"
         >
             <div>{{ name }}</div>
+            <div>{{ JSON.stringify(host) }}</div>
         </li>
     </ul>
 </template>

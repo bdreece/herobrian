@@ -16,6 +16,8 @@ declare module 'vue' {
     DefaultNavbar: typeof import('./components/default-navbar.vue')['default']
     DefaultSidebar: typeof import('./components/default-sidebar.vue')['default']
     FormControl: typeof import('./components/form-control.vue')['default']
+    LoadingSpinner: typeof import('./components/loading-spinner.vue')['default']
+    ProfileMenu: typeof import('./components/profile-menu.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

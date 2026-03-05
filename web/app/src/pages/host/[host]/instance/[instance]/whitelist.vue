@@ -1,5 +1,6 @@
 <script setup lang="ts">
     definePage({
+        name: 'instance-whitelist',
         meta: {},
     });
 </script>

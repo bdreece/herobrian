@@ -35,14 +35,15 @@ declare module 'vue-router/auto-routes' {
       '/host',
       Record<never, never>,
       Record<never, never>,
-      | '/host/[host]'
-      | '/host/[host]/'
-      | '/host/[host]/instance/'
-      | '/host/[host]/instance/[instance]'
-      | '/host/[host]/instance/[instance]/'
-      | '/host/[host]/instance/[instance]/properties'
-      | '/host/[host]/instance/[instance]/whitelist'
+      | 'host'
+      | 'host-home'
+      | 'host-metrics'
       | 'hosts'
+      | 'instance'
+      | 'instance-home'
+      | 'instance-properties'
+      | 'instance-whitelist'
+      | 'instances'
     >,
     'hosts': RouteRecordInfo<
       'hosts',
@@ -51,60 +52,68 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/host/[host]': RouteRecordInfo<
-      '/host/[host]',
+    'host': RouteRecordInfo<
+      'host',
       '/host/:host',
       { host: ParamValue<true> },
       { host: ParamValue<false> },
-      | '/host/[host]/'
-      | '/host/[host]/instance/'
-      | '/host/[host]/instance/[instance]'
-      | '/host/[host]/instance/[instance]/'
-      | '/host/[host]/instance/[instance]/properties'
-      | '/host/[host]/instance/[instance]/whitelist'
+      | 'host-home'
+      | 'host-metrics'
+      | 'instance'
+      | 'instance-home'
+      | 'instance-properties'
+      | 'instance-whitelist'
+      | 'instances'
     >,
-    '/host/[host]/': RouteRecordInfo<
-      '/host/[host]/',
+    'host-home': RouteRecordInfo<
+      'host-home',
       '/host/:host',
       { host: ParamValue<true> },
       { host: ParamValue<false> },
       | never
     >,
-    '/host/[host]/instance/': RouteRecordInfo<
-      '/host/[host]/instance/',
+    'instances': RouteRecordInfo<
+      'instances',
       '/host/:host/instance',
       { host: ParamValue<true> },
       { host: ParamValue<false> },
       | never
     >,
-    '/host/[host]/instance/[instance]': RouteRecordInfo<
-      '/host/[host]/instance/[instance]',
+    'instance': RouteRecordInfo<
+      'instance',
       '/host/:host/instance/:instance',
       { host: ParamValue<true>, instance: ParamValue<true> },
       { host: ParamValue<false>, instance: ParamValue<false> },
-      | '/host/[host]/instance/[instance]/'
-      | '/host/[host]/instance/[instance]/properties'
-      | '/host/[host]/instance/[instance]/whitelist'
+      | 'instance-home'
+      | 'instance-properties'
+      | 'instance-whitelist'
     >,
-    '/host/[host]/instance/[instance]/': RouteRecordInfo<
-      '/host/[host]/instance/[instance]/',
+    'instance-home': RouteRecordInfo<
+      'instance-home',
       '/host/:host/instance/:instance',
       { host: ParamValue<true>, instance: ParamValue<true> },
       { host: ParamValue<false>, instance: ParamValue<false> },
       | never
     >,
-    '/host/[host]/instance/[instance]/properties': RouteRecordInfo<
-      '/host/[host]/instance/[instance]/properties',
+    'instance-properties': RouteRecordInfo<
+      'instance-properties',
       '/host/:host/instance/:instance/properties',
       { host: ParamValue<true>, instance: ParamValue<true> },
       { host: ParamValue<false>, instance: ParamValue<false> },
       | never
     >,
-    '/host/[host]/instance/[instance]/whitelist': RouteRecordInfo<
-      '/host/[host]/instance/[instance]/whitelist',
+    'instance-whitelist': RouteRecordInfo<
+      'instance-whitelist',
       '/host/:host/instance/:instance/whitelist',
       { host: ParamValue<true>, instance: ParamValue<true> },
       { host: ParamValue<false>, instance: ParamValue<false> },
+      | never
+    >,
+    'host-metrics': RouteRecordInfo<
+      'host-metrics',
+      '/host/:host/metrics',
+      { host: ParamValue<true> },
+      { host: ParamValue<false> },
       | never
     >,
     'users': RouteRecordInfo<
@@ -128,6 +137,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    'profile': RouteRecordInfo<
+      'profile',
+      '/user/profile',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     'recovery': RouteRecordInfo<
       'recovery',
       '/user/recovery',
@@ -140,13 +156,6 @@ declare module 'vue-router/auto-routes' {
       '/user/:id',
       { id: ParamValue<true> },
       { id: ParamValue<false> },
-      | never
-    >,
-    'profile': RouteRecordInfo<
-      'profile',
-      '/user/profile',
-      Record<never, never>,
-      Record<never, never>,
       | never
     >,
   }
@@ -170,15 +179,16 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/host.vue': {
       routes:
-        | '/host/[host]'
-        | '/host/[host]/'
-        | '/host/[host]/instance/'
-        | '/host/[host]/instance/[instance]'
-        | '/host/[host]/instance/[instance]/'
-        | '/host/[host]/instance/[instance]/properties'
-        | '/host/[host]/instance/[instance]/whitelist'
+        | 'host'
+        | 'host-home'
         | 'host-layout'
+        | 'host-metrics'
         | 'hosts'
+        | 'instance'
+        | 'instance-home'
+        | 'instance-properties'
+        | 'instance-whitelist'
+        | 'instances'
       views:
         | 'default'
     }
@@ -190,52 +200,59 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/host/[host].vue': {
       routes:
-        | '/host/[host]'
-        | '/host/[host]/'
-        | '/host/[host]/instance/'
-        | '/host/[host]/instance/[instance]'
-        | '/host/[host]/instance/[instance]/'
-        | '/host/[host]/instance/[instance]/properties'
-        | '/host/[host]/instance/[instance]/whitelist'
+        | 'host'
+        | 'host-home'
+        | 'host-metrics'
+        | 'instance'
+        | 'instance-home'
+        | 'instance-properties'
+        | 'instance-whitelist'
+        | 'instances'
       views:
         | 'default'
     }
     'src/pages/host/[host]/index.vue': {
       routes:
-        | '/host/[host]/'
+        | 'host-home'
       views:
         | never
     }
     'src/pages/host/[host]/instance/index.vue': {
       routes:
-        | '/host/[host]/instance/'
+        | 'instances'
       views:
         | never
     }
     'src/pages/host/[host]/instance/[instance].vue': {
       routes:
-        | '/host/[host]/instance/[instance]'
-        | '/host/[host]/instance/[instance]/'
-        | '/host/[host]/instance/[instance]/properties'
-        | '/host/[host]/instance/[instance]/whitelist'
+        | 'instance'
+        | 'instance-home'
+        | 'instance-properties'
+        | 'instance-whitelist'
       views:
         | 'default'
     }
     'src/pages/host/[host]/instance/[instance]/index.vue': {
       routes:
-        | '/host/[host]/instance/[instance]/'
+        | 'instance-home'
       views:
         | never
     }
     'src/pages/host/[host]/instance/[instance]/properties.vue': {
       routes:
-        | '/host/[host]/instance/[instance]/properties'
+        | 'instance-properties'
       views:
         | never
     }
     'src/pages/host/[host]/instance/[instance]/whitelist.vue': {
       routes:
-        | '/host/[host]/instance/[instance]/whitelist'
+        | 'instance-whitelist'
+      views:
+        | never
+    }
+    'src/pages/host/[host]/metrics.vue': {
+      routes:
+        | 'host-metrics'
       views:
         | never
     }
@@ -257,6 +274,12 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/pages/user/(auth)/profile.vue': {
+      routes:
+        | 'profile'
+      views:
+        | never
+    }
     'src/pages/user/(auth)/recovery.vue': {
       routes:
         | 'recovery'
@@ -266,12 +289,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/user/[id].vue': {
       routes:
         | 'user'
-      views:
-        | never
-    }
-    'src/pages/user/profile.vue': {
-      routes:
-        | 'profile'
       views:
         | never
     }

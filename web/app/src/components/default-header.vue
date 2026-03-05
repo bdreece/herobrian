@@ -4,6 +4,8 @@
     defineProps<{
         items: NavItem[];
     }>();
+
+    const [authenticated] = useAuth();
 </script>
 
 <template>
@@ -21,7 +23,7 @@
             </label>
         </div>
         <RouterLink
-            to="/"
+            :to="{ name: 'home' }"
             class="btn btn-ghost items-center text-xl"
         >
             <i class="iconify solar--bonfire-line-duotone" />
@@ -35,7 +37,7 @@
                     :key="item.id"
                 >
                     <RouterLink
-                        :to="item.href"
+                        :to="item.to"
                         class="flex gap-1"
                     >
                         <i
@@ -48,5 +50,6 @@
                 </li>
             </ul>
         </nav>
+        <ProfileMenu v-if="authenticated" />
     </header>
 </template>

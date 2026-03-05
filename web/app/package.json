@@ -9,6 +9,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@tanstack/vue-query": "^5.92.9",
         "@unhead/vue": "catalog:frontend",
         "@vueuse/core": "catalog:frontend",
         "@vueuse/integrations": "catalog:frontend",

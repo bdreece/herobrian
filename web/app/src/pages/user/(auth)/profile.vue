@@ -1,9 +1,7 @@
 <script setup lang="ts">
     definePage({
-        name: 'recovery',
+        name: 'profile',
         meta: {
-            allowAnonymous: true,
-            layout: 'auth',
             seo: {
                 title: 'herobrian - Profile',
             },

@@ -5,7 +5,7 @@
         {
             id: 'hosts',
             text: 'Hosts',
-            href: '/host',
+            to: '/host',
         },
     ];
 </script>
