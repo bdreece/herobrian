@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"log/slog"
 
-	"github.com/bdreece/herobrian/internal/identity"
+	"github.com/bdreece/herobrian/internal/security"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
 	_ "modernc.org/sqlite"
@@ -34,7 +34,7 @@ func openDB() (*sql.DB, error) {
 	return sql.Open("sqlite", dsn)
 }
 
-func decorateQueries(queries *Queries, hasher identity.PasswordHasher, lc fx.Lifecycle) *Queries {
+func decorateQueries(queries *Queries, hasher security.PasswordHasher, lc fx.Lifecycle) *Queries {
 	lc.Append(fx.StartHook(func(ctx context.Context) error {
 		slog.Debug("applying schema...")
 		if _, err := queries.ApplySchema(ctx); err != nil {

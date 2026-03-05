@@ -45,12 +45,12 @@ type HostProvider interface {
 	RestartHosts(ctx context.Context, ids ...string) error
 }
 
-type HostHandler struct {
+type HostController struct {
 	provider HostProvider
 	hosts    map[string]HostConfig
 }
 
-func NewHostHandler(provider HostProvider) (*HostHandler, error) {
+func NewHostController(provider HostProvider) (*HostController, error) {
 	hosts := map[string]HostConfig{}
 	if err := viper.UnmarshalKey("minecraft:hosts", &hosts); err != nil {
 		return nil, err
@@ -58,20 +58,20 @@ func NewHostHandler(provider HostProvider) (*HostHandler, error) {
 
 	slog.Debug("unmarshaled hosts", "hosts", hosts)
 
-	return &HostHandler{
+	return &HostController{
 		provider: provider,
 		hosts:    hosts,
 	}, nil
 
 }
 
-func (h *HostHandler) Routes() []echo.Route {
+func (h *HostController) Routes() []echo.Route {
 	return []echo.Route{
 		{Method: http.MethodGet, Path: "/host", Handler: h.List},
 	}
 }
 
-func (h *HostHandler) List(c *echo.Context) error {
+func (h *HostController) List(c *echo.Context) error {
 	ids := slices.Collect(func(yield func(string) bool) {
 		for key := range h.hosts {
 			if !yield(h.hosts[key].ID) {

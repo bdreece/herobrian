@@ -9,9 +9,9 @@ import (
 var Module = fx.Module("user",
 	fx.Provide(
 		fx.Annotate(
-			NewHandler,
-			fx.As(new(route.Router)),
-			fx.ResultTags(`group:"routes"`),
+			NewController,
+			fx.As(new(route.Controller)),
+			fx.ResultTags(`group:"controllers"`),
 		),
 	),
 )

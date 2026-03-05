@@ -12,9 +12,9 @@ var Module = fx.Module("minecraft",
 			fx.As(new(HostProvider)),
 		),
 		fx.Annotate(
-			NewHostHandler,
-			fx.As(new(route.Router)),
-			fx.ResultTags(`group:"routes"`),
+			NewHostController,
+			fx.As(new(route.Controller)),
+			fx.ResultTags(`group:"controllers"`),
 		),
 	),
 )

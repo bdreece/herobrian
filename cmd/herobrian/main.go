@@ -16,8 +16,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/bdreece/herobrian/internal/database"
-	"github.com/bdreece/herobrian/internal/identity"
 	"github.com/bdreece/herobrian/internal/route"
+	"github.com/bdreece/herobrian/internal/security"
 	"github.com/bdreece/herobrian/pkg/minecraft"
 	"github.com/bdreece/herobrian/pkg/user"
 	"github.com/spf13/cobra"
@@ -65,7 +65,7 @@ func init() {
 	viper.SetDefault("jwt:invite:lifetime", time.Hour)
 	viper.SetDefault("jwt:invite:secret", rand.Text())
 
-	viper.SetDefault("log:level:fx", int(slog.LevelInfo))
+	viper.SetDefault("log:level:fx", int(slog.LevelDebug))
 	viper.SetDefault("log:level:stdlib", int(slog.LevelDebug))
 	viper.SetDefault("log:level:http", int(slog.LevelWarn))
 
@@ -116,14 +116,20 @@ func setup(cmd *cobra.Command, _ []string) error {
 }
 
 func run(cmd *cobra.Command, _ []string) {
-
 	var logOption fx.Option
-	if viper.GetInt("log:level:fx") >= 0 {
-		logOption = fx.NopLogger
-	} else {
+
+	if mode == "debug" {
 		logOption = fx.WithLogger(func() fxevent.Logger {
-			return &fxevent.SlogLogger{Logger: slog.Default()}
+			logger := fxevent.SlogLogger{
+				Logger: slog.Default().With("scope", "fx"),
+			}
+
+			logger.UseLogLevel(slog.Level(viper.GetInt("log:level:fx")))
+
+			return &logger
 		})
+	} else {
+		logOption = fx.NopLogger
 	}
 
 	awsOptions := fx.Options(
@@ -138,8 +144,9 @@ func run(cmd *cobra.Command, _ []string) {
 	fx.New(
 		logOption,
 		awsOptions,
+		fx.Supply(slog.Default()),
 		database.Module,
-		identity.Module,
+		security.Module,
 		user.Module,
 		minecraft.Module,
 		route.Module,

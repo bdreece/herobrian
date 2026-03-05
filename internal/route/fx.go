@@ -13,8 +13,8 @@ import (
 
 var Module = fx.Module("route",
 	fx.Provide(
-		fx.Annotate(NewMux,
-			fx.ParamTags(`group:"routes"`),
+		fx.Annotate(NewRouter,
+			fx.ParamTags(`group:"controllers"`),
 			fx.As(fx.Self()),
 			fx.As(new(http.Handler)),
 		),
@@ -26,7 +26,6 @@ var Module = fx.Module("route",
 
 func newServer(handler http.Handler) *http.Server {
 	addr := net.JoinHostPort("", fmt.Sprint(viper.GetInt("port")))
-	fmt.Printf("%T", handler)
 	srv := http.Server{
 		Addr:    addr,
 		Handler: handler,

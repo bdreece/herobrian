@@ -1,4 +1,4 @@
-package identity
+package security
 
 import (
 	"github.com/go-crypt/crypt"
