@@ -1,13 +1,12 @@
 <script setup lang="ts">
     definePage({
-        name: 'users',
+        name: 'user-layout',
         meta: {
-            title: 'Users',
-            layout: 'default',
+            breadcrumb: 'Users',
         },
     });
 </script>
 
 <template>
-    <div></div>
+    <RouterView />
 </template>

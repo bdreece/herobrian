@@ -29,5 +29,6 @@ declare module 'vue' {
     SimpleCard: typeof import('./components/SimpleCard.vue')['default']
     StatusIndicator: typeof import('./components/StatusIndicator.vue')['default']
     TabList: typeof import('./components/TabList.vue')['default']
+    ThemeSwitcher: typeof import('./components/ThemeSwitcher.vue')['default']
   }
 }

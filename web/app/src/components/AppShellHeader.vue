@@ -57,7 +57,12 @@
             </ul>
         </nav>
 
-        <NotificationTray class="mr-2" />
+        <ThemeSwitcher />
+
+        <NotificationTray
+            v-if="authenticated"
+            class="mr-2"
+        />
 
         <ProfileMenu v-if="authenticated" />
     </header>

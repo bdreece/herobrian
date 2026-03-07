@@ -41,7 +41,7 @@ declare module 'vue-router/auto-routes' {
       | 'host-metrics'
       | 'hosts'
       | 'instance'
-      | 'instance-home'
+      | 'instance-layout'
       | 'instance-properties'
       | 'instance-whitelist'
     >,
@@ -61,7 +61,7 @@ declare module 'vue-router/auto-routes' {
       | 'host-instances'
       | 'host-metrics'
       | 'instance'
-      | 'instance-home'
+      | 'instance-layout'
       | 'instance-properties'
       | 'instance-whitelist'
     >,
@@ -79,17 +79,17 @@ declare module 'vue-router/auto-routes' {
       { host: ParamValue<false> },
       | never
     >,
-    'instance': RouteRecordInfo<
-      'instance',
+    'instance-layout': RouteRecordInfo<
+      'instance-layout',
       '/host/:host/instance/:instance',
       { host: ParamValue<true>, instance: ParamValue<true> },
       { host: ParamValue<false>, instance: ParamValue<false> },
-      | 'instance-home'
+      | 'instance'
       | 'instance-properties'
       | 'instance-whitelist'
     >,
-    'instance-home': RouteRecordInfo<
-      'instance-home',
+    'instance': RouteRecordInfo<
+      'instance',
       '/host/:host/instance/:instance',
       { host: ParamValue<true>, instance: ParamValue<true> },
       { host: ParamValue<false>, instance: ParamValue<false> },
@@ -115,6 +115,18 @@ declare module 'vue-router/auto-routes' {
       { host: ParamValue<true> },
       { host: ParamValue<false> },
       | never
+    >,
+    'user-layout': RouteRecordInfo<
+      'user-layout',
+      '/user',
+      Record<never, never>,
+      Record<never, never>,
+      | 'login'
+      | 'logout'
+      | 'profile'
+      | 'recovery'
+      | 'user'
+      | 'users'
     >,
     'users': RouteRecordInfo<
       'users',
@@ -186,7 +198,7 @@ declare module 'vue-router/auto-routes' {
         | 'hosts'
         | 'hosts-layout'
         | 'instance'
-        | 'instance-home'
+        | 'instance-layout'
         | 'instance-properties'
         | 'instance-whitelist'
       views:
@@ -205,7 +217,7 @@ declare module 'vue-router/auto-routes' {
         | 'host-layout'
         | 'host-metrics'
         | 'instance'
-        | 'instance-home'
+        | 'instance-layout'
         | 'instance-properties'
         | 'instance-whitelist'
       views:
@@ -226,7 +238,7 @@ declare module 'vue-router/auto-routes' {
     'src/pages/host/[host]/instance/[instance].vue': {
       routes:
         | 'instance'
-        | 'instance-home'
+        | 'instance-layout'
         | 'instance-properties'
         | 'instance-whitelist'
       views:
@@ -234,7 +246,7 @@ declare module 'vue-router/auto-routes' {
     }
     'src/pages/host/[host]/instance/[instance]/index.vue': {
       routes:
-        | 'instance-home'
+        | 'instance'
       views:
         | never
     }
@@ -255,6 +267,18 @@ declare module 'vue-router/auto-routes' {
         | 'host-metrics'
       views:
         | never
+    }
+    'src/pages/user.vue': {
+      routes:
+        | 'login'
+        | 'logout'
+        | 'profile'
+        | 'recovery'
+        | 'user'
+        | 'user-layout'
+        | 'users'
+      views:
+        | 'default'
     }
     'src/pages/user/index.vue': {
       routes:

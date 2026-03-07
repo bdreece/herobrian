@@ -7,6 +7,11 @@
             text: 'Hosts',
             to: '/host',
         },
+        {
+            id: 'users',
+            text: 'Users',
+            to: '/user',
+        },
     ];
 </script>
 

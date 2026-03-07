@@ -9,12 +9,12 @@
 
 <template>
     <details class="dropdown dropdown-end">
-        <summary class="btn m-1">
+        <summary class="btn btn-ghost">
             <i class="iconify solar--bell-line-duotone" />
         </summary>
 
         <ul
-            class="menu dropdown-content bg-base-200 rounded-box z-1 w-52 p-2 shadow-sm"
+            class="menu dropdown-content bg-base-200 rounded-box z-1 mt-3 w-52 p-2 shadow-sm"
         >
             <li
                 v-for="notif of notifications"

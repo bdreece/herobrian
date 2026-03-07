@@ -10,7 +10,7 @@ export interface JwtClaims extends Required<JwtPayload> {
 }
 
 export const useToken = createGlobalState(() =>
-    useLocalStorage<string>('access_token', null, {
+    useLocalStorage<string>('herobrian_access_token', null, {
         writeDefaults: false,
     }),
 );

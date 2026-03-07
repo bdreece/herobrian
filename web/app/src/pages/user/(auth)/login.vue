@@ -41,7 +41,7 @@
                     @submit="onSubmit"
                 >
                     <FormControl
-                        label="Username"
+                        label="Display Name"
                         type="text"
                         name="displayName"
                         placeholder="awesomeshooter12"
