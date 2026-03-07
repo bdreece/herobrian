@@ -3,6 +3,7 @@
 
     defineProps<{
         items: NavItem[];
+        toggleId: string;
     }>();
 
     const [authenticated] = useAuth();
@@ -15,21 +16,25 @@
             class="flex-none lg:hidden"
         >
             <label
-                for="drawer-toggle"
+                :for="toggleId"
                 aria-label="open sidebar"
                 class="btn btn-square btn-ghost"
             >
                 <i class="iconify solar--hamburger-menu-line-duotone" />
             </label>
         </div>
+
         <RouterLink
             :to="{ name: 'home' }"
             class="btn btn-ghost items-center text-xl"
         >
             <i class="iconify solar--bonfire-line-duotone" />
+
             <span class="font-heading font-bold">herobrian</span>
         </RouterLink>
-        <div class="flex-1" />
+
+        <span class="flex-1" />
+
         <nav class="hidden flex-none lg:block">
             <ul class="menu menu-horizontal">
                 <li
@@ -45,11 +50,15 @@
                             class="iconify"
                             :class="item.icon"
                         />
+
                         <span v-text="item.text" />
                     </RouterLink>
                 </li>
             </ul>
         </nav>
+
+        <NotificationTray class="mr-2" />
+
         <ProfileMenu v-if="authenticated" />
     </header>
 </template>

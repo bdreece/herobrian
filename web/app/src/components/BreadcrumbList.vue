@@ -7,13 +7,14 @@
     }
 
     const route = useRoute();
+    const router = useRouter();
 
     const items = computed<Item[]>(() =>
         route.matched
             .filter(r => r.meta.breadcrumb)
             .map(r => ({
-                text: r.meta.breadcrumb!,
-                to: r.path,
+                text: fromRoute(route, r.meta.breadcrumb!),
+                to: router.resolve(r).href,
             })),
     );
 </script>

@@ -3,13 +3,14 @@
 
     defineProps<{
         items: NavItem[];
+        toggleId: string;
     }>();
 </script>
 
 <template>
     <div class="drawer-side">
         <label
-            for="drawer-toggle"
+            :for="toggleId"
             aria-label="close sidebar"
             class="drawer-overlay"
         ></label>
@@ -28,6 +29,7 @@
                         class="iconify"
                         :class="item.icon"
                     />
+
                     <span v-text="item.text" />
                 </RouterLink>
             </li>

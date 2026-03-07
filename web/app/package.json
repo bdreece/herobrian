@@ -13,6 +13,7 @@
         "@unhead/vue": "catalog:frontend",
         "@vueuse/core": "catalog:frontend",
         "@vueuse/integrations": "catalog:frontend",
+        "@vueuse/router": "^14.2.1",
         "axios": "catalog:frontend",
         "dayjs": "catalog:frontend",
         "jwt-decode": "catalog:frontend",

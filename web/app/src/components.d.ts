@@ -11,14 +11,23 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    BreadcrumbList: typeof import('./components/breadcrumb-list.vue')['default']
+    AppShell: typeof import('./components/AppShell.vue')['default']
+    AppShellFooter: typeof import('./components/AppShellFooter.vue')['default']
+    AppShellHeader: typeof import('./components/AppShellHeader.vue')['default']
+    AppShellSidebar: typeof import('./components/AppShellSidebar.vue')['default']
+    BreadcrumbList: typeof import('./components/BreadcrumbList.vue')['default']
     DefaultHeader: typeof import('./components/default-header.vue')['default']
     DefaultNavbar: typeof import('./components/default-navbar.vue')['default']
     DefaultSidebar: typeof import('./components/default-sidebar.vue')['default']
-    FormControl: typeof import('./components/form-control.vue')['default']
-    LoadingSpinner: typeof import('./components/loading-spinner.vue')['default']
-    ProfileMenu: typeof import('./components/profile-menu.vue')['default']
+    FloatingActionButton: typeof import('./components/FloatingActionButton.vue')['default']
+    FormControl: typeof import('./components/FormControl.vue')['default']
+    LoadingSpinner: typeof import('./components/LoadingSpinner.vue')['default']
+    NotificationTray: typeof import('./components/NotificationTray.vue')['default']
+    ProfileMenu: typeof import('./components/ProfileMenu.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SimpleCard: typeof import('./components/SimpleCard.vue')['default']
+    StatusIndicator: typeof import('./components/StatusIndicator.vue')['default']
+    TabList: typeof import('./components/TabList.vue')['default']
   }
 }

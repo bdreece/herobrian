@@ -40,10 +40,17 @@ export default defineConfig({
                 unheadVueComposablesImports,
                 VueRouterAutoImports,
                 {
-                    'vue-router/auto': ['useLink'],
+                    '@tanstack/vue-query': ['useQuery', 'useMutation'],
                 },
                 {
-                    '@tanstack/vue-query': ['useQuery', 'useMutation'],
+                    '@vueuse/router': [
+                        'useRouteHash',
+                        'useRouteParams',
+                        'useRouteQuery',
+                    ],
+                },
+                {
+                    'vue-router/auto': ['useLink'],
                 },
             ],
             dirs: ['src/composables'],
@@ -63,7 +70,7 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            '~/': 'src/',
+            '~': 'src',
         },
     },
 });

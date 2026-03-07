@@ -30,20 +30,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    'host-layout': RouteRecordInfo<
-      'host-layout',
+    'hosts-layout': RouteRecordInfo<
+      'hosts-layout',
       '/host',
       Record<never, never>,
       Record<never, never>,
       | 'host'
-      | 'host-home'
+      | 'host-instances'
+      | 'host-layout'
       | 'host-metrics'
       | 'hosts'
       | 'instance'
       | 'instance-home'
       | 'instance-properties'
       | 'instance-whitelist'
-      | 'instances'
     >,
     'hosts': RouteRecordInfo<
       'hosts',
@@ -52,28 +52,28 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    'host': RouteRecordInfo<
-      'host',
+    'host-layout': RouteRecordInfo<
+      'host-layout',
       '/host/:host',
       { host: ParamValue<true> },
       { host: ParamValue<false> },
-      | 'host-home'
+      | 'host'
+      | 'host-instances'
       | 'host-metrics'
       | 'instance'
       | 'instance-home'
       | 'instance-properties'
       | 'instance-whitelist'
-      | 'instances'
     >,
-    'host-home': RouteRecordInfo<
-      'host-home',
+    'host': RouteRecordInfo<
+      'host',
       '/host/:host',
       { host: ParamValue<true> },
       { host: ParamValue<false> },
       | never
     >,
-    'instances': RouteRecordInfo<
-      'instances',
+    'host-instances': RouteRecordInfo<
+      'host-instances',
       '/host/:host/instance',
       { host: ParamValue<true> },
       { host: ParamValue<false> },
@@ -180,15 +180,15 @@ declare module 'vue-router/auto-routes' {
     'src/pages/host.vue': {
       routes:
         | 'host'
-        | 'host-home'
+        | 'host-instances'
         | 'host-layout'
         | 'host-metrics'
         | 'hosts'
+        | 'hosts-layout'
         | 'instance'
         | 'instance-home'
         | 'instance-properties'
         | 'instance-whitelist'
-        | 'instances'
       views:
         | 'default'
     }
@@ -201,25 +201,25 @@ declare module 'vue-router/auto-routes' {
     'src/pages/host/[host].vue': {
       routes:
         | 'host'
-        | 'host-home'
+        | 'host-instances'
+        | 'host-layout'
         | 'host-metrics'
         | 'instance'
         | 'instance-home'
         | 'instance-properties'
         | 'instance-whitelist'
-        | 'instances'
       views:
         | 'default'
     }
     'src/pages/host/[host]/index.vue': {
       routes:
-        | 'host-home'
+        | 'host'
       views:
         | never
     }
     'src/pages/host/[host]/instance/index.vue': {
       routes:
-        | 'instances'
+        | 'host-instances'
       views:
         | never
     }

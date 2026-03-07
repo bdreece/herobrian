@@ -5,7 +5,7 @@
             allowAnonymous: true,
             layout: 'auth',
             seo: {
-                title: 'herobrian - Login',
+                title: 'herobrian \u2014 Login',
             },
         },
     });

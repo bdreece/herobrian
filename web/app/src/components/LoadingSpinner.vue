@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    export type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    import type { Size } from '~/types/primitives';
 
     const { size = 'md' } = defineProps<{
         size?: Size;

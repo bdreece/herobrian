@@ -1,18 +1,14 @@
 <script setup lang="ts">
     definePage({
-        name: 'host-layout',
+        name: 'hosts-layout',
         meta: {
             breadcrumb: 'Hosts',
-            seo: {
-                title: 'herobrian - Hosts',
-            },
         },
     });
 
-    provideHosts();
+    provideHostQuery();
 </script>
 
 <template>
-    <BreadcrumbList />
     <RouterView />
 </template>

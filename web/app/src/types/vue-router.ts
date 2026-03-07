@@ -1,9 +1,10 @@
 import type { UseSeoMetaInput } from '@unhead/vue';
+import type { MaybeRouteGetter } from '~/composables/route';
 import 'vue-router';
 
 declare module 'vue-router' {
     interface RouteMeta {
-        breadcrumb?: string;
+        breadcrumb?: MaybeRouteGetter<string>;
         seo?: UseSeoMetaInput;
         layout?: string;
         transition?: string;

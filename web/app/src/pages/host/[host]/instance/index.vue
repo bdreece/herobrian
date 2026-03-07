@@ -1,7 +1,9 @@
 <script setup lang="ts">
     definePage({
-        name: 'instances',
-        meta: {},
+        name: 'host-instances',
+        meta: {
+            breadcrumb: 'Instances',
+        },
     });
 </script>
 
