@@ -11,8 +11,8 @@ type AccessClaims struct {
 	FirstName   string `json:"given_name"`
 	LastName    string `json:"family_name"`
 	DisplayName string `json:"preferred_username"`
-	Picture     string `json:"picture"`
-	Role        string `json:"role"`
+	Picture     string `json:"picture,omitempty"`
+	Role        string `json:"role,omitempty"`
 }
 
 type AccessHandler struct{ encoder[*AccessClaims] }
