@@ -10,47 +10,58 @@ import (
 
 	"github.com/labstack/echo/v5"
 	"github.com/spf13/viper"
+	"go.uber.org/fx"
+)
+
+type (
+	HostInfo struct {
+		ID           string        `json:"-"`
+		Architecture string        `json:"arch"`
+		DNSName      string        `json:"-"`
+		Image        *ImageInfo    `json:"image"`
+		IPAddress    string        `json:"-"`
+		Platform     string        `json:"platform"`
+		Processor    ProcessorInfo `json:"processor"`
+	}
+
+	ImageInfo struct {
+		Type string `json:"type"`
+		// Memory size in MiB.
+		Memory *int64 `json:"memory"`
+		// Storage space in GiB.
+		Storage *int64 `json:"storage"`
+		Network string `json:"network"`
+	}
+
+	ProcessorInfo struct {
+		CoreCount      *int32 `json:"cores"`
+		ThreadsPerCore *int32 `json:"threads"`
+	}
+
+	HostProvider interface {
+		Hosts(ctx context.Context, ids ...string) ([]*HostInfo, error)
+		StartHosts(ctx context.Context, ids ...string) error
+		StopHosts(ctx context.Context, ids ...string) error
+		RestartHosts(ctx context.Context, ids ...string) error
+	}
+
+	HostControllerParams struct {
+		fx.In
+
+		Provider HostProvider
+		Logger   *slog.Logger
+	}
+
+	HostController struct {
+		provider HostProvider
+		logger   *slog.Logger
+		hosts    map[string]HostConfig
+	}
 )
 
 var ErrHostNotFound = errors.New("minecraft: host not found")
 
-type HostInfo struct {
-	ID           string        `json:"-"`
-	Architecture string        `json:"arch"`
-	DNSName      string        `json:"-"`
-	Image        *ImageInfo    `json:"image"`
-	IPAddress    string        `json:"-"`
-	Platform     string        `json:"platform"`
-	Processor    ProcessorInfo `json:"processor"`
-}
-
-type ImageInfo struct {
-	Type string `json:"type"`
-	// Memory size in MiB.
-	Memory *int64 `json:"memory"`
-	// Storage space in GiB.
-	Storage *int64 `json:"storage"`
-	Network string `json:"network"`
-}
-
-type ProcessorInfo struct {
-	CoreCount      *int32 `json:"cores"`
-	ThreadsPerCore *int32 `json:"threads"`
-}
-
-type HostProvider interface {
-	Hosts(ctx context.Context, ids ...string) ([]*HostInfo, error)
-	StartHosts(ctx context.Context, ids ...string) error
-	StopHosts(ctx context.Context, ids ...string) error
-	RestartHosts(ctx context.Context, ids ...string) error
-}
-
-type HostController struct {
-	provider HostProvider
-	hosts    map[string]HostConfig
-}
-
-func NewHostController(provider HostProvider) (*HostController, error) {
+func NewHostController(p HostControllerParams) (*HostController, error) {
 	hosts := map[string]HostConfig{}
 	if err := viper.UnmarshalKey("minecraft:hosts", &hosts); err != nil {
 		return nil, err
@@ -58,11 +69,13 @@ func NewHostController(provider HostProvider) (*HostController, error) {
 
 	slog.Debug("unmarshaled hosts", "hosts", hosts)
 
-	return &HostController{
-		provider: provider,
-		hosts:    hosts,
-	}, nil
+	controller := HostController{
+		p.Provider,
+		p.Logger.With("scope", "minecraft.HostController"),
+		hosts,
+	}
 
+	return &controller, nil
 }
 
 func (h *HostController) Routes() []echo.Route {

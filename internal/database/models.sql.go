@@ -16,6 +16,7 @@ type User struct {
 	LastName     string    `json:"lastName"`
 	DisplayName  string    `json:"displayName"`
 	PasswordHash string    `json:"passwordHash"`
+	Role         string    `json:"role"`
 	PictureURL   *string   `json:"pictureUrl"`
 	TOTPSecret   *string   `json:"totpSecret"`
 }

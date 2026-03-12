@@ -16,8 +16,8 @@ type Controller struct {
 	querier             database.Querier
 	passwordHasher      security.PasswordHasher
 	accessTokenEncoder  token.Encoder[*token.AccessClaims]
-	refreshTokenEncoder token.Encoder[*token.RefreshClaims]
 	inviteTokenEncoder  token.Encoder[*token.InviteClaims]
+	refreshTokenHandler token.Handler[*token.RefreshClaims]
 	logger              *slog.Logger
 }
 
@@ -27,8 +27,8 @@ type ControllerParams struct {
 	Querier             database.Querier
 	PasswordHasher      security.PasswordHasher
 	AccessTokenEncoder  token.Encoder[*token.AccessClaims]
-	RefreshTokenEncoder token.Encoder[*token.RefreshClaims]
 	InviteTokenEncoder  token.Encoder[*token.InviteClaims]
+	RefreshTokenHandler token.Handler[*token.RefreshClaims]
 	Logger              *slog.Logger
 }
 
@@ -37,9 +37,9 @@ func NewController(p ControllerParams) *Controller {
 		p.Querier,
 		p.PasswordHasher,
 		p.AccessTokenEncoder,
-		p.RefreshTokenEncoder,
 		p.InviteTokenEncoder,
-		p.Logger.With("scope", "user.Router"),
+		p.RefreshTokenHandler,
+		p.Logger.With("scope", "user.Controller"),
 	}
 }
 
@@ -49,5 +49,6 @@ func (self *Controller) Routes() []echo.Route {
 		{Method: http.MethodPost, Path: "/user/invite", Handler: self.Invite},
 		{Method: http.MethodPost, Path: "/user/login", Handler: self.Login},
 		{Method: http.MethodPost, Path: "/user/logout", Handler: self.Logout},
+		{Method: http.MethodPost, Path: "/user/refresh", Handler: self.Refresh},
 	}
 }

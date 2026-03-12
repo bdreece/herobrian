@@ -1,19 +1,13 @@
 package user
 
 import (
-	"crypto/md5"
 	"database/sql"
-	"encoding/base64"
-	"fmt"
 	"net/http"
-	"time"
 
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v5"
 	"github.com/spf13/viper"
 
 	"github.com/bdreece/herobrian/internal/database"
-	"github.com/bdreece/herobrian/internal/security/token"
 )
 
 type loginForm struct {
@@ -58,18 +52,7 @@ func (self *Controller) Login(c *echo.Context) error {
 
 	self.logger.Debug("authenticated user")
 
-	now := time.Now()
-	accessClaims := token.AccessClaims{
-		FirstName:   user.FirstName,
-		LastName:    user.LastName,
-		DisplayName: user.DisplayName,
-	}
-
-	accessClaims.SetSubject(fmt.Sprint(user.ID))
-	accessClaims.SetNotBefore(jwt.NewNumericDate(now))
-	accessClaims.SetIssuedAt(jwt.NewNumericDate(now))
-
-	accessToken, _, err := self.accessTokenEncoder.Encode(&accessClaims)
+	accessToken, _, err := self.accessTokenEncoder.Encode(newAccessClaims(user))
 	if err != nil {
 		return echo.ErrInternalServerError.Wrap(err)
 	}
@@ -77,26 +60,19 @@ func (self *Controller) Login(c *echo.Context) error {
 	self.logger.Debug("signed user access token")
 
 	if form.RememberMe != nil && *form.RememberMe {
-		atHash := md5.Sum([]byte(accessToken))
-		refreshClaims := token.RefreshClaims{
-			ATHash: base64.StdEncoding.EncodeToString(atHash[:]),
-		}
-
-		refreshClaims.SetSubject(fmt.Sprint(user.ID))
-		refreshClaims.SetNotBefore(jwt.NewNumericDate(now))
-		refreshClaims.SetIssuedAt(jwt.NewNumericDate(now))
-
-		refreshToken, _, err := self.refreshTokenEncoder.Encode(&refreshClaims)
+		refreshToken, _, err := self.refreshTokenHandler.Encode(newRefreshClaims(user, accessToken))
 		if err != nil {
 			return echo.ErrInternalServerError.Wrap(err)
 		}
 
-		var cookie http.Cookie
-		if err := viper.UnmarshalKey("http:cookie:refresh", &cookie); err != nil {
-			return echo.ErrInternalServerError.Wrap(err)
+		cookie := http.Cookie{
+			Name:     viper.GetString("http:cookie:refresh"),
+			Value:    refreshToken,
+			Path:     "/",
+			HttpOnly: true,
+			SameSite: http.SameSiteStrictMode,
+			MaxAge:   604800,
 		}
-
-		cookie.Value = refreshToken
 
 		c.SetCookie(&cookie)
 	}

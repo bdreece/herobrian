@@ -10,7 +10,7 @@ import (
 )
 
 const findUserByDisplayName = `-- name: FindUserByDisplayName :one
-SELECT u.id, u.created_at, u.updated_at, u.first_name, u.last_name, u.display_name, u.password_hash, u.picture_url, u.totp_secret
+SELECT u.id, u.created_at, u.updated_at, u.first_name, u.last_name, u.display_name, u.password_hash, u.role, u.picture_url, u.totp_secret
 FROM users AS u
 WHERE u.display_name = ?1
 LIMIT 1
@@ -31,6 +31,7 @@ func (q *Queries) FindUserByDisplayName(ctx context.Context, arg FindUserByDispl
 		&i.LastName,
 		&i.DisplayName,
 		&i.PasswordHash,
+		&i.Role,
 		&i.PictureURL,
 		&i.TOTPSecret,
 	)
@@ -38,7 +39,7 @@ func (q *Queries) FindUserByDisplayName(ctx context.Context, arg FindUserByDispl
 }
 
 const findUserByID = `-- name: FindUserByID :one
-SELECT u.id, u.created_at, u.updated_at, u.first_name, u.last_name, u.display_name, u.password_hash, u.picture_url, u.totp_secret
+SELECT u.id, u.created_at, u.updated_at, u.first_name, u.last_name, u.display_name, u.password_hash, u.role, u.picture_url, u.totp_secret
 FROM users AS u
 WHERE u.id = ?1
 LIMIT 1
@@ -59,6 +60,7 @@ func (q *Queries) FindUserByID(ctx context.Context, arg FindUserByIDParams) (*Us
 		&i.LastName,
 		&i.DisplayName,
 		&i.PasswordHash,
+		&i.Role,
 		&i.PictureURL,
 		&i.TOTPSecret,
 	)
@@ -72,6 +74,7 @@ INSERT INTO users
 	last_name,
 	display_name,
 	password_hash,
+	role,
 	picture_url,
 	totp_secret
 )
@@ -82,15 +85,17 @@ VALUES
 	?3,
 	?4,
 	?5,
-	?6
+	?6,
+	?7
 ) ON CONFLICT (display_name) DO UPDATE 
-  SET updated_at = DATETIME('now'),
-      first_name = ?1,
-      last_name = ?2,
+  SET updated_at    = DATETIME('now'),
+      first_name    = ?1,
+      last_name     = ?2,
       password_hash = ?4,
-      picture_url = ?5,
-      totp_secret = ?6
-WHERE display_name = ?3
+      role          = ?5,
+      picture_url   = ?6,
+      totp_secret   = ?7
+WHERE display_name  = ?3
 `
 
 type UpsertUserParams struct {
@@ -98,6 +103,7 @@ type UpsertUserParams struct {
 	LastName     string  `json:"lastName"`
 	DisplayName  string  `json:"displayName"`
 	PasswordHash string  `json:"passwordHash"`
+	Role         string  `json:"role"`
 	PictureURL   *string `json:"pictureUrl"`
 	TOTPSecret   *string `json:"totpSecret"`
 }
@@ -108,6 +114,7 @@ func (q *Queries) UpsertUser(ctx context.Context, arg UpsertUserParams) (int64, 
 		arg.LastName,
 		arg.DisplayName,
 		arg.PasswordHash,
+		arg.Role,
 		arg.PictureURL,
 		arg.TOTPSecret,
 	)

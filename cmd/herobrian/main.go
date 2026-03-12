@@ -15,11 +15,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
-	"github.com/bdreece/herobrian/internal/database"
-	"github.com/bdreece/herobrian/internal/route"
-	"github.com/bdreece/herobrian/internal/security"
-	"github.com/bdreece/herobrian/pkg/minecraft"
-	"github.com/bdreece/herobrian/pkg/user"
+	"github.com/r3labs/sse/v2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
@@ -27,6 +23,12 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
 	_ "modernc.org/sqlite"
+
+	"github.com/bdreece/herobrian/internal/database"
+	"github.com/bdreece/herobrian/internal/route"
+	"github.com/bdreece/herobrian/internal/security"
+	"github.com/bdreece/herobrian/pkg/minecraft"
+	"github.com/bdreece/herobrian/pkg/user"
 )
 
 var (
@@ -53,10 +55,11 @@ func init() {
 		viper.EnvKeyReplacer(strings.NewReplacer("__", ":")),
 	)
 
-	viper.SetDefault("app:root_dir", "/usr/share/herobrian/www")
-	viper.SetDefault("app:proxy_url", "http://localhost:5173")
-
 	viper.SetDefault("aws:region", "us-east-2")
+
+	viper.SetDefault("http:cookie:refresh", "herobrian-rt")
+	viper.SetDefault("http:root_dir", "/usr/share/herobrian/www")
+	viper.SetDefault("http:proxy_url", "http://localhost:5173")
 
 	viper.SetDefault("jwt:default:aud", "herobrian.bdreece.dev")
 	viper.SetDefault("jwt:default:iss", "herobrian.bdreece.dev")
@@ -75,6 +78,7 @@ func init() {
 	viper.SetDefault("sqlite:admin:display_name", "admin")
 	viper.SetDefault("sqlite:admin:password", "password")
 	viper.SetDefault("sqlite:admin:picture_url", "https://i.imgflip.com/2/k2klk.jpg")
+	viper.SetDefault("sqlite:admin:role", "swashbuckler")
 
 	viper.RegisterAlias("log:level:default", "log-level")
 }
@@ -119,32 +123,16 @@ func run(cmd *cobra.Command, _ []string) {
 	var logOption fx.Option
 
 	if mode == "debug" {
-		logOption = fx.WithLogger(func() fxevent.Logger {
-			logger := fxevent.SlogLogger{
-				Logger: slog.Default().With("scope", "fx"),
-			}
-
-			logger.UseLogLevel(slog.Level(viper.GetInt("log:level:fx")))
-
-			return &logger
-		})
+		logOption = fx.WithLogger(newFxLogger)
 	} else {
 		logOption = fx.NopLogger
 	}
 
-	awsOptions := fx.Options(
-		fx.Provide(func() (aws.Config, error) {
-			return config.LoadDefaultConfig(context.TODO(),
-				config.WithRegion(viper.GetString("aws:region")),
-			)
-		}),
-		fx.Provide(ec2.NewFromConfig),
-	)
-
 	fx.New(
 		logOption,
-		awsOptions,
 		fx.Supply(slog.Default()),
+		fx.Provide(newAwsConfig, ec2.NewFromConfig),
+		fx.Provide(sse.New),
 		database.Module,
 		security.Module,
 		user.Module,
@@ -162,4 +150,20 @@ func main() {
 	case errors.As(err, new(*pflag.InvalidValueError)):
 		cobrautl.ExitWithError(cobrautl.ExitInvalidInput, err)
 	}
+}
+
+func newAwsConfig() (aws.Config, error) {
+	return config.LoadDefaultConfig(context.TODO(),
+		config.WithRegion(viper.GetString("aws:region")),
+	)
+}
+
+func newFxLogger() fxevent.Logger {
+	logger := fxevent.SlogLogger{
+		Logger: slog.Default().With("scope", "fx"),
+	}
+
+	logger.UseLogLevel(slog.Level(viper.GetInt("log:level:fx")))
+
+	return &logger
 }

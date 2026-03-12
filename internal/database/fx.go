@@ -47,6 +47,7 @@ func decorateQueries(queries *Queries, hasher security.PasswordHasher, lc fx.Lif
 			DisplayName string `mapstructure:"display_name"`
 			Password    string `mapstructure:"password"`
 			PictureURL  string `mapstructure:"picture_url"`
+			Role        string `mapstructure:"role"`
 		}
 
 		if err := viper.UnmarshalKey("sqlite:admin", &admin); err != nil {
@@ -64,6 +65,7 @@ func decorateQueries(queries *Queries, hasher security.PasswordHasher, lc fx.Lif
 			DisplayName:  admin.DisplayName,
 			PictureURL:   &admin.PictureURL,
 			PasswordHash: digest.String(),
+			Role:         admin.Role,
 		}
 
 		slog.Debug("upserting admin", "params", params)

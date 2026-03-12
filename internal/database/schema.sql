@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
 	last_name     TEXT     NOT NULL,
 	display_name  TEXT     NOT NULL,
 	password_hash TEXT     NOT NULL,
+	role          TEXT     NOT NULL   CHECK ( role IN ('landlubber', 'scallywag', 'freebooter', 'privateer', 'swashbuckler') ),
 	picture_url   TEXT         NULL,
 	totp_secret   TEXT         NULL,
 
