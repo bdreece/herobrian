@@ -15,7 +15,7 @@
 </script>
 
 <template>
-    <div class="stats shadow">
+    <div class="stats bg-base-300 shadow">
         <div class="stat">
             <div class="stat-title">Type</div>
             <div class="stat-value">{{ host?.image.type }}</div>

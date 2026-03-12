@@ -70,6 +70,8 @@
                             class="checkbox"
                             type="checkbox"
                             name="rememberMe"
+                            value="true"
+                            :form="formId"
                         />
                         Remember Me?
                     </label>

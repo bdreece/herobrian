@@ -31,7 +31,7 @@
         {{ hostname }}
     </h3>
 
-    <SimpleCard class="bg-base-200">
+    <SimpleCard class="bg-base-200 min-h-48">
         <template #title>
             <div class="tabs tabs-box">
                 <RouterLink

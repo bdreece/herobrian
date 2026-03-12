@@ -16,11 +16,18 @@
 
     <ul class="list bg-base-200 rounded-box shadow-md">
         <li
-            v-for="[name] in Object.entries(hosts ?? {})"
-            :key="name"
+            v-for="[hostname] in Object.entries(hosts ?? {})"
+            :key="hostname"
             class="list-row"
         >
-            <RouterLink :to="`/host/${name}`">{{ name }}</RouterLink>
+            <RouterLink
+                :to="{
+                    name: 'host',
+                    params: { host: hostname },
+                }"
+            >
+                {{ hostname }}
+            </RouterLink>
 
             <span class="flex-1" />
 

@@ -18,7 +18,7 @@
 <template>
     <AppShell :items>
         <BreadcrumbList class="mb-6" />
-        <div class="container mx-auto">
+        <div class="container mx-auto flex-1">
             <RouterView />
         </div>
     </AppShell>

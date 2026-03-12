@@ -17,7 +17,7 @@
             class="drawer-toggle"
         />
 
-        <section class="drawer-content flex flex-col">
+        <section class="drawer-content flex flex-col h-screen">
             <AppShellHeader
                 :items
                 :toggle-id
