@@ -16,9 +16,6 @@ declare module 'vue' {
     AppShellHeader: typeof import('./components/AppShellHeader.vue')['default']
     AppShellSidebar: typeof import('./components/AppShellSidebar.vue')['default']
     BreadcrumbList: typeof import('./components/BreadcrumbList.vue')['default']
-    DefaultHeader: typeof import('./components/default-header.vue')['default']
-    DefaultNavbar: typeof import('./components/default-navbar.vue')['default']
-    DefaultSidebar: typeof import('./components/default-sidebar.vue')['default']
     FloatingActionButton: typeof import('./components/FloatingActionButton.vue')['default']
     FormControl: typeof import('./components/FormControl.vue')['default']
     LoadingSpinner: typeof import('./components/LoadingSpinner.vue')['default']
@@ -28,7 +25,6 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SimpleCard: typeof import('./components/SimpleCard.vue')['default']
     StatusIndicator: typeof import('./components/StatusIndicator.vue')['default']
-    TabList: typeof import('./components/TabList.vue')['default']
     ThemeSwitcher: typeof import('./components/ThemeSwitcher.vue')['default']
   }
 }

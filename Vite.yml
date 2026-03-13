@@ -19,7 +19,7 @@ vars:
     VITE_EMPTY_OUT_DIR: true
     VITE_SOURCEMAP: { ref: .ENVIRONMENT | eq "production" }
     VITE_MINIFY: { ref: .ENVIRONMENT | eq "production" }
-    VITE_OUT_DIR: { ref: .OUT_DIR }
+    VITE_OUT_DIR: { ref: printf "%s/bin/%s/dist" .ROOT_DIR .CONFIGURATION }
 
     VITE_BUILDFLAGS:
         - --emptyOutDir {{.VITE_EMPTY_OUT_DIR}}
@@ -90,4 +90,4 @@ tasks:
         vars:
             FLAGS: { ref: .PNPM_EXECFLAGS | join " " }
             TEST_FLAGS: '--mode {{.VITE_MODE}}'
-        cmd: pnpm {{.FLAGS}} exec vitest run {{.TEST_FLAGS}}
+        cmd: pnpm {{.FLAGS}} exec vitest run {{.TEST_FLAGS}} --passWithNoTests

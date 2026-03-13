@@ -125,5 +125,5 @@ tasks:
         aliases: [t]
         vars:
             TEST_FLAGS: { ref: .GO_TESTFLAGS | join " " }
-            FLAGS: { ref: concat .GO_FLAGS .GO_BUILD_FLAGS | join " " }
+            FLAGS: { ref: concat .GO_FLAGS .GO_BUILDFLAGS | join " " }
         cmd: go test {{.FLAGS}} {{.GO_TESTS}} {{.TEST_FLAGS}}

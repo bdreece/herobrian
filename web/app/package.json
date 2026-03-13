@@ -45,6 +45,7 @@
         "vite": "catalog:build",
         "vite-bundle-analyzer": "catalog:dev",
         "vite-plugin-vue-layouts-next": "catalog:build",
+        "vitest": "^4.1.0",
         "vue-macros": "catalog:build",
         "vue-tsc": "catalog:dev"
     }
