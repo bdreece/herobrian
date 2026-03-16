@@ -43,12 +43,12 @@ func NewController(p ControllerParams) *Controller {
 	}
 }
 
-func (self *Controller) Routes() []echo.Route {
+func (u *Controller) Routes() []echo.Route {
 	return []echo.Route{
-		{Method: http.MethodPost, Path: "/user/activate", Handler: self.Activate},
-		{Method: http.MethodPost, Path: "/user/invite", Handler: self.Invite},
-		{Method: http.MethodPost, Path: "/user/login", Handler: self.Login},
-		{Method: http.MethodPost, Path: "/user/logout", Handler: self.Logout},
-		{Method: http.MethodPost, Path: "/user/refresh", Handler: self.Refresh},
+		{Method: http.MethodPost, Path: "/user/activate", Handler: u.Activate},
+		{Method: http.MethodPost, Path: "/user/invite", Handler: u.Invite},
+		{Method: http.MethodPost, Path: "/user/login", Handler: u.Login},
+		{Method: http.MethodPost, Path: "/user/logout", Handler: u.Logout},
+		{Method: http.MethodPost, Path: "/user/refresh", Handler: u.Refresh},
 	}
 }

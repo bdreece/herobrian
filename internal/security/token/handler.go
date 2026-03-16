@@ -39,7 +39,7 @@ func (e *encoder[C]) Encode(claims C) (string, *jwt.Token, error) {
 
 	claims.SetAudience(jwt.ClaimStrings(e.options.Audience))
 	claims.SetIssuer(e.options.Issuer)
-	claims.SetExpirationTime(jwt.NewNumericDate(iat.Time.Add(e.options.Lifetime)))
+	claims.SetExpirationTime(jwt.NewNumericDate(iat.Add(e.options.Lifetime)))
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	secret, _ := base64.StdEncoding.DecodeString(e.options.Secret)

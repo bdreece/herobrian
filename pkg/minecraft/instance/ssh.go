@@ -1,4 +1,4 @@
-package minecraft
+package instance
 
 import (
 	"context"
@@ -13,7 +13,7 @@ type SSHProvider struct {
 }
 
 // Instances implements [InstanceProvider].
-func (provider *SSHProvider) Instances(ctx context.Context, ids ...string) ([]InstanceInfo, error) {
+func (provider *SSHProvider) Instances(ctx context.Context, ids ...string) ([]Info, error) {
 	sess, err := provider.Client.NewSession()
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func (s *SSHProvider) RestartInstance(ctx context.Context, id string) error {
 }
 
 // TraceInstance implements [InstanceProvider].
-func (s *SSHProvider) TraceInstance(ctx context.Context, id string) (*InstanceTracer, error) {
+func (s *SSHProvider) TraceInstance(ctx context.Context, id string) (*Tracer, error) {
 	panic("unimplemented")
 }
 

@@ -16,13 +16,13 @@ type refreshResult struct {
 	AccessToken string `json:"accessToken"`
 }
 
-func (self *Controller) Refresh(c *echo.Context) error {
+func (u *Controller) Refresh(c *echo.Context) error {
 	cookie, err := c.Cookie(viper.GetString("http:cookie:refresh"))
 	if err != nil {
 		return echo.ErrUnauthorized.Wrap(err)
 	}
 
-	claims, _, err := self.refreshTokenHandler.Decode(cookie.Value)
+	claims, _, err := u.refreshTokenHandler.Decode(cookie.Value)
 	if err != nil {
 		return echo.ErrUnauthorized.Wrap(err)
 	}
@@ -41,17 +41,17 @@ func (self *Controller) Refresh(c *echo.Context) error {
 		ID: id,
 	}
 
-	user, err := self.querier.FindUserByID(c.Request().Context(), params)
+	user, err := u.querier.FindUserByID(c.Request().Context(), params)
 	if err != nil {
 		return echo.ErrBadGateway.Wrap(err)
 	}
 
-	accessToken, _, err := self.accessTokenEncoder.Encode(newAccessClaims(user))
+	accessToken, _, err := u.accessTokenEncoder.Encode(newAccessClaims(user))
 	if err != nil {
 		return echo.ErrInternalServerError.Wrap(err)
 	}
 
-	refreshToken, _, err := self.refreshTokenHandler.Encode(newRefreshClaims(user, accessToken))
+	refreshToken, _, err := u.refreshTokenHandler.Encode(newRefreshClaims(user, accessToken))
 	if err != nil {
 		return echo.ErrInternalServerError.Wrap(err)
 	}

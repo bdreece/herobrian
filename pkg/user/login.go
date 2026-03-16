@@ -20,7 +20,7 @@ type loginResult struct {
 	AccessToken string `json:"accessToken"`
 }
 
-func (self *Controller) Login(c *echo.Context) error {
+func (u *Controller) Login(c *echo.Context) error {
 	var form loginForm
 
 	if err := c.Bind(&form); err != nil {
@@ -31,10 +31,10 @@ func (self *Controller) Login(c *echo.Context) error {
 		return echo.ErrBadRequest.Wrap(err)
 	}
 
-	self.logger.Debug("parsed form", "form", form)
+	u.logger.Debug("parsed form", "form", form)
 
 	ctx := c.Request().Context()
-	user, err := self.querier.FindUserByDisplayName(ctx, database.FindUserByDisplayNameParams{
+	user, err := u.querier.FindUserByDisplayName(ctx, database.FindUserByDisplayNameParams{
 		DisplayName: form.DisplayName,
 	})
 
@@ -44,23 +44,23 @@ func (self *Controller) Login(c *echo.Context) error {
 		return echo.ErrUnauthorized.Wrap(err)
 	}
 
-	self.logger.Debug("queried user", "user", user.ID)
-	digest, _ := self.passwordHasher.Decode(user.PasswordHash)
+	u.logger.Debug("queried user", "user", user.ID)
+	digest, _ := u.passwordHasher.Decode(user.PasswordHash)
 	if !digest.Match(form.Password) {
 		return echo.ErrUnauthorized.Wrap(err)
 	}
 
-	self.logger.Debug("authenticated user")
+	u.logger.Debug("authenticated user")
 
-	accessToken, _, err := self.accessTokenEncoder.Encode(newAccessClaims(user))
+	accessToken, _, err := u.accessTokenEncoder.Encode(newAccessClaims(user))
 	if err != nil {
 		return echo.ErrInternalServerError.Wrap(err)
 	}
 
-	self.logger.Debug("signed user access token")
+	u.logger.Debug("signed user access token")
 
 	if form.RememberMe != nil && *form.RememberMe {
-		refreshToken, _, err := self.refreshTokenHandler.Encode(newRefreshClaims(user, accessToken))
+		refreshToken, _, err := u.refreshTokenHandler.Encode(newRefreshClaims(user, accessToken))
 		if err != nil {
 			return echo.ErrInternalServerError.Wrap(err)
 		}

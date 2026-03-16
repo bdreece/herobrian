@@ -1,4 +1,4 @@
-package minecraft
+package host
 
 import (
 	"context"
@@ -17,9 +17,9 @@ func NewEC2Provider(client *ec2.Client) *EC2Provider {
 	return &EC2Provider{client}
 }
 
-var _ HostProvider = (*EC2Provider)(nil)
+var _ Provider = (*EC2Provider)(nil)
 
-func (provider *EC2Provider) Hosts(ctx context.Context, ids ...string) ([]*HostInfo, error) {
+func (provider *EC2Provider) Hosts(ctx context.Context, ids ...string) ([]*Info, error) {
 	instanceOutput, err := provider.client.DescribeInstances(ctx, &ec2.DescribeInstancesInput{
 		InstanceIds: ids,
 	})
@@ -28,19 +28,26 @@ func (provider *EC2Provider) Hosts(ctx context.Context, ids ...string) ([]*HostI
 		return nil, err
 	}
 
-	hostsByType := map[types.InstanceType][]*HostInfo{}
+	hostsByType := map[types.InstanceType][]*Info{}
 	for _, r := range instanceOutput.Reservations {
 		for _, i := range r.Instances {
-			info := HostInfo{
+			info := Info{
 				ID:           *i.InstanceId,
 				Architecture: string(i.Architecture),
-				DNSName:      *i.PublicDnsName,
-				IPAddress:    *i.PublicIpAddress,
-				Platform:     *i.PlatformDetails,
 				Processor: ProcessorInfo{
 					CoreCount:      i.CpuOptions.CoreCount,
 					ThreadsPerCore: i.CpuOptions.ThreadsPerCore,
 				},
+			}
+
+			if i.PublicDnsName != nil {
+				info.DNSName = *i.PublicDnsName
+			}
+			if i.PublicIpAddress != nil {
+				info.IPAddress = *i.PublicIpAddress
+			}
+			if i.PlatformDetails != nil {
+				info.Platform = *i.PlatformDetails
 			}
 
 			hostsByType[i.InstanceType] = append(hostsByType[i.InstanceType], &info)
@@ -55,7 +62,7 @@ func (provider *EC2Provider) Hosts(ctx context.Context, ids ...string) ([]*HostI
 		return nil, err
 	}
 
-	hosts := slices.Collect(func(yield func(*HostInfo) bool) {
+	hosts := slices.Collect(func(yield func(*Info) bool) {
 		for _, typeInfo := range typeOutput.InstanceTypes {
 			image := ImageInfo{
 				Type:    string(typeInfo.InstanceType),
@@ -98,4 +105,28 @@ func (provider *EC2Provider) RestartHosts(ctx context.Context, ids ...string) er
 	})
 
 	return err
+}
+
+// CheckHosts implements [HostProvider].
+func (provider *EC2Provider) CheckHosts(ctx context.Context, ids ...string) (map[string]string, error) {
+	output, err := provider.client.DescribeInstanceStatus(ctx, &ec2.DescribeInstanceStatusInput{
+		InstanceIds: ids,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	statuses := maps.Collect(func(yield func(string, string) bool) {
+		for _, status := range output.InstanceStatuses {
+			id := *status.InstanceId
+			state := string(status.InstanceState.Name)
+
+			if !yield(id, state) {
+				return
+			}
+		}
+	})
+
+	return statuses, nil
 }
