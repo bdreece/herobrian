@@ -9,11 +9,11 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@tanstack/vue-query": "^5.92.9",
+        "@tanstack/vue-query": "catalog:",
         "@unhead/vue": "catalog:frontend",
         "@vueuse/core": "catalog:frontend",
         "@vueuse/integrations": "catalog:frontend",
-        "@vueuse/router": "^14.2.1",
+        "@vueuse/router": "catalog:",
         "axios": "catalog:frontend",
         "dayjs": "catalog:frontend",
         "jwt-decode": "catalog:frontend",
@@ -45,7 +45,7 @@
         "vite": "catalog:build",
         "vite-bundle-analyzer": "catalog:dev",
         "vite-plugin-vue-layouts-next": "catalog:build",
-        "vitest": "^4.1.0",
+        "vitest": "catalog:",
         "vue-macros": "catalog:build",
         "vue-tsc": "catalog:dev"
     }

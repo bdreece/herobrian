@@ -7,6 +7,9 @@
         "tsBuildInfoFile": "../_obj/tsconfig.app.tsbuildinfo",
         "moduleDetection": "auto",
 
+        "paths": {
+            "~/*": ["src/*"]
+        },
         "types": [
             "unplugin-vue-router/client",
             "vite/client",
@@ -18,10 +21,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "erasableSyntaxOnly": true,
-        "noUncheckedSideEffectImports": true,
-        "paths": {
-            "~/*": ["src/*"]
-        }
+        "noUncheckedSideEffectImports": true
     },
     "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

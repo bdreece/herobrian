@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import type { RouteLocationRaw } from 'vue-router';
     import type { Item } from '~/components/FloatingActionButton.vue';
 
     definePage({
@@ -10,7 +11,7 @@
 
     const hostname = useRouteParams<string>('host');
 
-    const items: Item[] = [
+    const actionItems: Item[] = [
         {
             tooltip: 'Start',
             icon: 'solar--play-line-duotone',
@@ -50,6 +51,13 @@
 
                 <RouterLink
                     class="tab"
+                    :to="{ name: 'host-logs', params: { host: hostname } }"
+                >
+                    Logs
+                </RouterLink>
+
+                <RouterLink
+                    class="tab"
                     :to="{ name: 'host-metrics', params: { host: hostname } }"
                 >
                     Metrics
@@ -60,7 +68,7 @@
         <RouterView />
     </SimpleCard>
 
-    <FloatingActionButton :items>
+    <FloatingActionButton :items="actionItems">
         <i class="iconify solar--power-line-duotone" />
     </FloatingActionButton>
 </template>
