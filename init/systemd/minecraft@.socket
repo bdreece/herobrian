@@ -1,0 +1,10 @@
+[Unit]
+BindsTo=%N.service
+
+[Socket]
+ListenFIFO=%t/%N.sock
+Service=%N.service
+SocketUser=%p
+SocketGroup=%p
+RemoveOnStop=true
+SocketMode=0660

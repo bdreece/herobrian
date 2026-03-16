@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+minecraftctl-stop () {
+}
+
+minecraftctl-reload () {
+}
+
+minecraftctl () {
+	# http://redsymbol.net/articles/unofficial-bash-strict-mode/
+	set -euo pipefail
+	IFS=$'\n\t'
+
+	local cmdname=$1; shift
+	if type "minecraftctl-$cmdname" >/dev/null 2>&1; then
+		"minecraftctl-$cmdname" "$@"
+	else
+		printf "Invalid command: %s" "$cmdname" >&2
+		exit 1
+	fi
+}
+
+if [[ $BASH_SOURCE == "$0" ]]; then
+	minecraftctl "$@"
+fi

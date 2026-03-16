@@ -185,6 +185,10 @@ yarn-error.log
 .task/
 bin/
 _obj/
+
+pnpm-lock.yaml
+
 herobrian.yml
 herobrian.json
-pnpm-lock.yaml
+
+keys/

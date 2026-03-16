@@ -1,0 +1,37 @@
+[Unit]
+Description=Minecraft Server (%i)
+After=network.target
+ConditionPathExists=%S/%p/%i
+
+[Service]
+Type=simple
+WorkingDirectory=%S/%p/%i
+User=%p
+Group=%p
+
+Sockets=%N.socket
+StandardInput=socket
+StandardOutput=journal
+StandardError=journal
+
+PrivateUsers=true
+ProtectSystem=full
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+NoNewPrivileges=true
+
+ExecStart=/usr/bin/flock '%T/%p-%b.lck' /bin/sh -c './run.sh'
+
+ExecReload=/bin/sh -c '/bin/echo reload > %t/%N.sock'
+ExecReload=/bin/sh -c '/bin/echo "reload confirm" > %t/%N.sock'
+
+ExecStop=/bin/sh -c '/bin/echo save-all > %t/%N.sock'
+ExecStop=/bin/sh -c '/bin/echo stop > %t/%N.sock'
+
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

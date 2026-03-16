@@ -15,16 +15,16 @@
         "pnpm": "^10.28.2"
     },
     "devDependencies": {
-        "@antfu/eslint-config": "catalog:dev",
-        "@tsconfig/node-ts": "catalog:dev",
-        "@tsconfig/node24": "catalog:dev",
-        "@tsconfig/strictest": "catalog:dev",
-        "@types/eslint-config-prettier": "catalog:types",
-        "@types/node": "catalog:types",
-        "ajv": "catalog:dev",
-        "eslint": "catalog:dev",
-        "eslint-config-prettier": "catalog:dev",
-        "minimatch": "catalog:dev",
-        "prettier": "catalog:dev"
+        "@antfu/eslint-config": "catalog:",
+        "@tsconfig/node-ts": "catalog:",
+        "@tsconfig/node24": "catalog:",
+        "@tsconfig/strictest": "catalog:",
+        "@types/eslint-config-prettier": "catalog:",
+        "@types/node": "catalog:",
+        "ajv": "catalog:",
+        "eslint": "catalog:",
+        "eslint-config-prettier": "catalog:",
+        "minimatch": "catalog:",
+        "prettier": "catalog:"
     }
 }
