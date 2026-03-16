@@ -4,6 +4,10 @@ trustPolicy: no-downgrade
 packages:
     - web/app
 
+catalog:
+    '@tanstack/vue-query': ^5.92.9
+    '@vueuse/router': ^14.2.1
+    vitest: ^4.1.0
 catalogs:
     build:
         '@iconify-json/solar': ^1.2.5
@@ -54,7 +58,3 @@ catalogs:
 onlyBuiltDependencies:
     - esbuild
     - vue-demi
-catalog:
-    '@tanstack/vue-query': ^5.92.9
-    '@vueuse/router': ^14.2.1
-    vitest: ^4.1.0
