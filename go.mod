@@ -9,6 +9,7 @@ tool (
 	github.com/golangci/golangci-lint/v2/cmd/golangci-lint
 	github.com/sqlc-dev/sqlc/cmd/sqlc
 	golang.org/x/tools/cmd/stringer
+	golang.org/x/vuln/cmd/govulncheck
 )
 
 require (
@@ -29,6 +30,8 @@ require (
 require (
 	github.com/labstack/echo/v4 v4.15.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	golang.org/x/telemetry v0.0.0-20260109210033-bd525da824e2 // indirect
+	golang.org/x/vuln v1.1.4 // indirect
 	gopkg.in/cenkalti/backoff.v1 v1.1.0 // indirect
 )
 
