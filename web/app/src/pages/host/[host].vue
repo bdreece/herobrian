@@ -1,5 +1,4 @@
 <script setup lang="ts">
-    import type { RouteLocationRaw } from 'vue-router';
     import type { Item } from '~/components/FloatingActionButton.vue';
 
     definePage({
@@ -10,6 +9,13 @@
     });
 
     const hostname = useRouteParams<string>('host');
+    const { eventSource } = useEventSource(
+        () =>
+            new URL(
+                `/event?stream=${hostname.value}`,
+                import.meta.env.BASE_URL,
+            ),
+    );
 
     const actionItems: Item[] = [
         {

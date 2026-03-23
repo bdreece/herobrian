@@ -75,6 +75,7 @@ declare global {
     const onWatcherCleanup: typeof import('vue').onWatcherCleanup;
     const pausableWatch: typeof import('@vueuse/core').pausableWatch;
     const provide: typeof import('vue').provide;
+    const provideHostEvents: typeof import('./composables/host').provideHostEvents;
     const provideHostQuery: typeof import('./composables/host').provideHostQuery;
     const provideHosts: typeof import('./composables/host').provideHosts;
     const provideLocal: typeof import('@vueuse/core').provideLocal;
@@ -192,6 +193,7 @@ declare global {
     const useHead: typeof import('@unhead/vue').useHead;
     const useHeadSafe: typeof import('@unhead/vue').useHeadSafe;
     const useHost: typeof import('./composables/host').useHost;
+    const useHostEvents: typeof import('./composables/host').useHostEvents;
     const useHostQuery: typeof import('./composables/host').useHostQuery;
     const useHosts: typeof import('./composables/host').useHosts;
     const useId: typeof import('vue').useId;
@@ -267,6 +269,7 @@ declare global {
     const useSorted: typeof import('@vueuse/core').useSorted;
     const useSpeechRecognition: typeof import('@vueuse/core').useSpeechRecognition;
     const useSpeechSynthesis: typeof import('@vueuse/core').useSpeechSynthesis;
+    const useSse: typeof import('./composables/sse').useSse;
     const useStepper: typeof import('@vueuse/core').useStepper;
     const useStorage: typeof import('@vueuse/core').useStorage;
     const useStorageAsync: typeof import('@vueuse/core').useStorageAsync;
@@ -360,6 +363,9 @@ declare global {
     // @ts-ignore
     export type { RouteGetter, MaybeRouteGetter } from './composables/route';
     import('./composables/route');
+    // @ts-ignore
+    export type { UseSseReturn } from './composables/sse';
+    import('./composables/sse');
     // @ts-ignore
     export type { UseThemeReturn } from './composables/theme';
     import('./composables/theme');
@@ -1053,6 +1059,9 @@ declare module 'vue' {
         >;
         readonly useSpeechSynthesis: UnwrapRef<
             (typeof import('@vueuse/core'))['useSpeechSynthesis']
+        >;
+        readonly useSse: UnwrapRef<
+            (typeof import('./composables/sse'))['useSse']
         >;
         readonly useStepper: UnwrapRef<
             (typeof import('@vueuse/core'))['useStepper']

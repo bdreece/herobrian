@@ -1,7 +1,7 @@
 import type { Host } from '~/types/host';
 
 import { useQuery } from '@tanstack/vue-query';
-import { createInjectionState } from '@vueuse/core';
+import { createInjectionState, type EventBusKey } from '@vueuse/core';
 import axios from 'axios';
 
 export const [provideHostQuery, useHostQuery] = createInjectionState(() =>
@@ -17,10 +17,10 @@ export function useHosts() {
     return data;
 }
 
-export function useHost(hostname: string) {
+export function useHost(hostname: MaybeRefOrGetter<string>) {
     const hosts = useHosts();
 
-    return computed(() => hosts.value?.[hostname]);
+    return computed(() => hosts.value?.[toValue(hostname)]);
 }
 
 async function getHosts() {
