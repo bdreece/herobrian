@@ -9,29 +9,31 @@ import (
 	"github.com/r3labs/sse/v2"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
+
+	"github.com/bdreece/herobrian/pkg/minecraft/host"
 )
 
 type (
 	ControllerParams struct {
 		fx.In
 
-		Provider Provider
-		SSE      *sse.Server
-		Logger   *slog.Logger
+		HostDescriber host.Describer
+		SSE           *sse.Server
+		Logger        *slog.Logger
 	}
 
 	Controller struct {
-		provider Provider
-		sse      *sse.Server
-		logger   *slog.Logger
-		hosts    map[string]Config
+		describer host.Describer
+		sse       *sse.Server
+		logger    *slog.Logger
+		hosts     map[string]host.Config
 	}
 )
 
 var ErrHostNotFound = errors.New("minecraft: host not found")
 
 func NewController(p ControllerParams) (*Controller, error) {
-	hosts := map[string]Config{}
+	hosts := map[string]host.Config{}
 	if err := viper.UnmarshalKey("minecraft:hosts", &hosts); err != nil {
 		return nil, err
 	}
@@ -39,7 +41,7 @@ func NewController(p ControllerParams) (*Controller, error) {
 	slog.Debug("unmarshaled hosts", "hosts", hosts)
 
 	controller := Controller{
-		p.Provider,
+		p.HostDescriber,
 		p.SSE,
 		p.Logger.With("scope", "minecraft.HostController"),
 		hosts,

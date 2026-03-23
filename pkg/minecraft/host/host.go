@@ -1,7 +1,5 @@
 package host
 
-import "context"
-
 type (
 	Info struct {
 		ID           string        `json:"-"`
@@ -26,12 +24,16 @@ type (
 		CoreCount      *int32 `json:"cores"`
 		ThreadsPerCore *int32 `json:"threads"`
 	}
+)
 
-	Provider interface {
-		Hosts(ctx context.Context, ids ...string) ([]*Info, error)
-		CheckHosts(ctx context.Context, ids ...string) (map[string]string, error)
-		StartHosts(ctx context.Context, ids ...string) error
-		StopHosts(ctx context.Context, ids ...string) error
-		RestartHosts(ctx context.Context, ids ...string) error
-	}
+//go:generate go tool stringer -type=Status -trimprefix=Status
+type Status int
+
+const (
+	StatusPending Status = 16 * iota
+	StatusRunning
+	StatusShuttingDown
+	StatusTerminated
+	StatusStopping
+	StatusStopped
 )

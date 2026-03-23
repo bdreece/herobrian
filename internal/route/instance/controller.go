@@ -8,9 +8,7 @@ import (
 	"github.com/bdreece/herobrian/internal/route"
 )
 
-type Controller struct {
-	// instances map[string]Config
-}
+type Controller struct{}
 
 func (i *Controller) Routes() []echo.Route {
 	return []echo.Route{

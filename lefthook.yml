@@ -2,7 +2,9 @@
 pre-commit:
     parallel: true
     jobs:
-        - group:
+        - glob:
+              - '*.go'
+          group:
               jobs:
                   - run: go tool golangci-lint run ./...
                   - run: go tool golangci-lint fmt ./...

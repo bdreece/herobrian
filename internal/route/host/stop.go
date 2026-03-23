@@ -7,13 +7,9 @@ import (
 )
 
 func (h *Controller) Stop(c *echo.Context) error {
-	hostParam := c.Param("host")
-	host, ok := h.hosts[hostParam]
-	if !ok {
-		return echo.ErrBadRequest
-	}
+	client, _ := FromContext(c)
 
-	if err := h.provider.StopHosts(c.Request().Context(), host.ID); err != nil {
+	if err := client.Stop(c.Request().Context()); err != nil {
 		return echo.ErrBadGateway.Wrap(err)
 	}
 

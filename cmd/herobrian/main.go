@@ -34,15 +34,18 @@ import (
 var (
 	version string
 	mode    string
-)
 
-var cmd = cobra.Command{
-	Use:     filepath.Base(os.Args[0]),
-	Version: version,
-	Short:   "A Minecraft server management platform",
-	PreRunE: setup,
-	Run:     run,
-}
+	app *fx.App
+
+	cmd = cobra.Command{
+		Use:      filepath.Base(os.Args[0]),
+		Version:  version,
+		Short:    "A Minecraft server management platform",
+		PreRunE:  setup,
+		RunE:     run,
+		PostRunE: teardown,
+	}
+)
 
 func init() {
 	cmd.Flags().StringP("config", "c", "/etc/herobrian/config.yml", "path to config file")
@@ -119,7 +122,7 @@ func setup(cmd *cobra.Command, _ []string) error {
 	return nil
 }
 
-func run(cmd *cobra.Command, _ []string) {
+func run(cmd *cobra.Command, _ []string) error {
 	var logOption fx.Option
 
 	if mode == "debug" {
@@ -128,17 +131,35 @@ func run(cmd *cobra.Command, _ []string) {
 		logOption = fx.NopLogger
 	}
 
-	fx.New(
+	app = fx.New(
 		logOption,
 		fx.Supply(slog.Default()),
 		fx.Provide(newAwsConfig, ec2.NewFromConfig),
-		fx.Provide(sse.New),
+		fx.Provide(func() *sse.Server {
+			srv := sse.New()
+
+			srv.AutoStream = true
+			srv.EventTTL = time.Hour
+
+			return srv
+		}),
 		database.Module,
 		security.Module,
 		user.Module,
 		minecraft.Module,
 		route.Module,
-	).Run()
+	)
+
+	if err := app.Start(cmd.Context()); err != nil {
+		return err
+	}
+
+	<-cmd.Context().Done()
+	return nil
+}
+
+func teardown(cmd *cobra.Command, _ []string) error {
+	return app.Stop(context.Background())
 }
 
 func main() {

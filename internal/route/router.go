@@ -9,10 +9,14 @@ import (
 	echovalidator "gopkg.in/bdreece/echo-validator.v1"
 )
 
+type Controller interface {
+	Routes() []echo.Route
+}
+
 func NewRouter(controllers ...Controller) (*echo.Echo, error) {
 	e := echo.New()
-	e.HTTPErrorHandler = handleError
 	e.Validator = echovalidator.Default
+	e.HTTPErrorHandler = handleError
 
 	e.Use(
 		middleware.RequestLogger(),
