@@ -3,7 +3,9 @@ sql:
     - engine: sqlite
       schema: ../internal/database/schema.sql
       queries:
-          - ../internal/database/user.sql
+          - ../internal/database/users.sql
+          - ../internal/database/roles.sql
+          - ../internal/database/permissions.sql
       gen:
           go:
               package: database
@@ -12,7 +14,7 @@ sql:
               emit_interface: true
               emit_result_struct_pointers: true
               emit_pointers_for_null_types: true
-              initialisms: [id, totp, url]
+              initialisms: [id, totp, url, dns, ip, cpu]
               json_tags_case_style: camel
               output_batch_file_name: batch.sql.go
               output_db_file_name: db.sql.go
@@ -25,6 +27,46 @@ sql:
                         type: string
                         pointer: true
                   - column: users.totp_secret
+                    go_type:
+                        type: string
+                        pointer: true
+                  - column: hosts.arch
+                    go_type:
+                        type: string
+                        pointer: true
+                  - column: hosts.dns_name
+                    go_type:
+                        type: string
+                        pointer: true
+                  - column: hosts.ip_address
+                    go_type:
+                        type: string
+                        pointer: true
+                  - column: hosts.platform
+                    go_type:
+                        type: string
+                        pointer: true
+                  - column: hosts.cpu_cores
+                    go_type:
+                        type: string
+                        pointer: true
+                  - column: hosts.cpu_threads
+                    go_type:
+                        type: int64
+                        pointer: true
+                  - column: hosts.image_type
+                    go_type:
+                        type: string
+                        pointer: true
+                  - column: hosts.image_memory
+                    go_type:
+                        type: int64
+                        pointer: true
+                  - column: hosts.image_storage
+                    go_type:
+                        type: int64
+                        pointer: true
+                  - column: hosts.image_network
                     go_type:
                         type: string
                         pointer: true
