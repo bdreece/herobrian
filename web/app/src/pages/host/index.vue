@@ -16,7 +16,7 @@
 
     <ul class="list bg-base-200 rounded-box shadow-md">
         <li
-            v-for="[hostname] in Object.entries(hosts ?? {})"
+            v-for="hostname in Object.keys(hosts ?? {})"
             :key="hostname"
             class="list-row"
         >
