@@ -215,6 +215,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jjti/go-spancheck v0.6.5 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
+	github.com/jonhoo/go-events v0.0.0-20150121182257-5b240ffae643
 	github.com/julz/importas v0.2.0 // indirect
 	github.com/kaptinlin/go-i18n v0.1.7 // indirect
 	github.com/kaptinlin/jsonschema v0.4.14 // indirect

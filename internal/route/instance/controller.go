@@ -10,6 +10,10 @@ import (
 
 type Controller struct{}
 
+func NewController() *Controller {
+	return new(Controller)
+}
+
 func (i *Controller) Routes() []echo.Route {
 	return []echo.Route{
 		{Method: http.MethodGet, Path: "/host/:hostname/instance", Handler: i.List},

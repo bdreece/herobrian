@@ -9,8 +9,13 @@ import (
 )
 
 type Querier interface {
+	FindRoleByID(ctx context.Context, arg FindRoleByIDParams) (*Role, error)
 	FindUserByDisplayName(ctx context.Context, arg FindUserByDisplayNameParams) (*User, error)
 	FindUserByID(ctx context.Context, arg FindUserByIDParams) (*User, error)
+	ListPermissions(ctx context.Context, arg ListPermissionsParams) ([]*Permission, error)
+	ListRoles(ctx context.Context, arg ListRolesParams) ([]*Role, error)
+	UpsertPermission(ctx context.Context, arg UpsertPermissionParams) (int64, error)
+	UpsertRole(ctx context.Context, arg UpsertRoleParams) (int64, error)
 	UpsertUser(ctx context.Context, arg UpsertUserParams) (int64, error)
 }
 

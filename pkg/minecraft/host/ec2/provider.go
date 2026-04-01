@@ -9,16 +9,22 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/bdreece/herobrian/pkg/minecraft/host"
 	"github.com/bdreece/herobrian/pkg/minecraft/instance"
+	"github.com/spf13/viper"
 )
 
 type Provider struct {
 	client *ec2.Client
-
+	config map[string]host.Config
 	instance.ProviderFactory
 }
 
-func NewProvider(client *ec2.Client, factory instance.ProviderFactory) *Provider {
-	return &Provider{client, factory}
+func NewProvider(client *ec2.Client, factory instance.ProviderFactory) (*Provider, error) {
+	config := map[string]host.Config{}
+	if err := viper.UnmarshalKey("minecraft:hosts", &config); err != nil {
+		return nil, err
+	}
+
+	return &Provider{client, config, factory}, nil
 }
 
 var _ host.Provider = (*Provider)(nil)
@@ -26,7 +32,7 @@ var _ host.Provider = (*Provider)(nil)
 // DescribeHosts implements [host.Describer].
 func (provider *Provider) DescribeHosts(ctx context.Context, ids ...string) (map[string]*host.Info, error) {
 	instanceOutput, err := provider.client.DescribeInstances(ctx, &ec2.DescribeInstancesInput{
-		InstanceIds: ids,
+		InstanceIds: provider.resolveHosts(ids),
 	})
 
 	if err != nil {
@@ -138,4 +144,14 @@ func (provider *Provider) CheckHosts(ctx context.Context, ids ...string) (map[st
 	})
 
 	return statuses, nil
+}
+
+func (provider *Provider) resolveHosts(hosts []string) []string {
+	return slices.Collect(func(yield func(string) bool) {
+		for _, host := range hosts {
+			if !yield(provider.config[host].ID) {
+				return
+			}
+		}
+	})
 }

@@ -17,7 +17,6 @@ func newAccessClaims(user *database.User) *token.AccessClaims {
 		LastName:    user.LastName,
 		DisplayName: user.DisplayName,
 		Picture:     user.PictureURL,
-		Role:        user.Role,
 	}
 
 	now := time.Now()

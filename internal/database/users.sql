@@ -17,7 +17,6 @@ INSERT INTO users
 	last_name,
 	display_name,
 	password_hash,
-	role,
 	picture_url,
 	totp_secret
 )
@@ -27,7 +26,6 @@ VALUES
 	@last_name,
 	@display_name,
 	@password_hash,
-	@role,
 	@picture_url,
 	@totp_secret
 ) ON CONFLICT (display_name) DO UPDATE 
@@ -35,7 +33,6 @@ VALUES
       first_name    = ?1,
       last_name     = ?2,
       password_hash = ?4,
-      role          = ?5,
       picture_url   = ?6,
       totp_secret   = ?7
 WHERE display_name  = ?3;

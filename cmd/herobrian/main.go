@@ -26,9 +26,12 @@ import (
 
 	"github.com/bdreece/herobrian/internal/database"
 	"github.com/bdreece/herobrian/internal/route"
+	"github.com/bdreece/herobrian/internal/route/host"
+	"github.com/bdreece/herobrian/internal/route/instance"
+	"github.com/bdreece/herobrian/internal/route/user"
 	"github.com/bdreece/herobrian/internal/security"
-	"github.com/bdreece/herobrian/pkg/minecraft"
-	"github.com/bdreece/herobrian/pkg/user"
+	ec2host "github.com/bdreece/herobrian/pkg/minecraft/host/ec2"
+	sshinstance "github.com/bdreece/herobrian/pkg/minecraft/instance/ssh"
 )
 
 var (
@@ -145,8 +148,11 @@ func run(cmd *cobra.Command, _ []string) error {
 		}),
 		database.Module,
 		security.Module,
+		ec2host.Module,
+		host.Module,
+		sshinstance.Module,
+		instance.Module,
 		user.Module,
-		minecraft.Module,
 		route.Module,
 	)
 

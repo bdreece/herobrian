@@ -59,20 +59,32 @@ func decorateQueries(queries *Queries, hasher security.PasswordHasher, lc fx.Lif
 			return err
 		}
 
-		params := UpsertUserParams{
+		userParams := UpsertUserParams{
 			FirstName:    admin.FirstName,
 			LastName:     admin.LastName,
 			DisplayName:  admin.DisplayName,
 			PictureURL:   &admin.PictureURL,
 			PasswordHash: digest.String(),
-			Role:         admin.Role,
 		}
 
-		slog.Debug("upserting admin", "params", params)
-
-		if _, err := queries.UpsertUser(ctx, params); err != nil {
+		if _, err := queries.UpsertUser(ctx, userParams); err != nil {
 			slog.Error("failed to upsert admin", "error", err)
 			return err
+		}
+
+		roleParams := []UpsertRoleParams{
+			{Name: "landlubber"},
+			{Name: "scallywag"},
+			{Name: "freebooter"},
+			{Name: "privateer"},
+			{Name: "swashbuckler"},
+		}
+
+		for _, p := range roleParams {
+			if _, err := queries.UpsertRole(ctx, p); err != nil {
+				slog.Error("failed to upsert role", "error", err)
+				return err
+			}
 		}
 
 		return nil

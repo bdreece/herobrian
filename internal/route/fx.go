@@ -24,6 +24,15 @@ var Module = fx.Module("route",
 	fx.Invoke(func(*http.Server) {}),
 )
 
+func ProvideController(t any) fx.Option {
+	return fx.Provide(
+		fx.Annotate(t,
+			fx.As(new(Controller)),
+			fx.ResultTags(`group:"controllers"`),
+		),
+	)
+}
+
 func newServer(handler http.Handler) *http.Server {
 	addr := net.JoinHostPort("", fmt.Sprint(viper.GetInt("port")))
 	srv := http.Server{

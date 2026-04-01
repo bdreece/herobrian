@@ -8,6 +8,22 @@ import (
 	"time"
 )
 
+type Permission struct {
+	ID       int64  `json:"id"`
+	Resource string `json:"resource"`
+	Method   string `json:"method"`
+}
+
+type Role struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+}
+
+type RolePermission struct {
+	RoleID       int64 `json:"roleId"`
+	PermissionID int64 `json:"permissionId"`
+}
+
 type User struct {
 	ID           int64     `json:"id"`
 	CreatedAt    time.Time `json:"createdAt"`
@@ -16,7 +32,11 @@ type User struct {
 	LastName     string    `json:"lastName"`
 	DisplayName  string    `json:"displayName"`
 	PasswordHash string    `json:"passwordHash"`
-	Role         string    `json:"role"`
 	PictureURL   *string   `json:"pictureUrl"`
 	TOTPSecret   *string   `json:"totpSecret"`
+}
+
+type UserRole struct {
+	UserID int64 `json:"userId"`
+	RoleID int64 `json:"roleId"`
 }
